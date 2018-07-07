@@ -1,0 +1,81 @@
+# hostname (and path) to the root eg. http://spf13.com/
+baseurl = "https://vabs.github.io/"
+
+# Site title
+title = "Technical Musings"
+
+# Favicon
+favicon = "/static/images/favicon.ico"
+
+# Copyright
+copyright = "(c) 2018 vabs."
+
+# Language
+languageCode = "en-EN"
+
+# enable emoji
+enableEmoji = true
+
+# Metadata format
+# "yaml", "toml", "json"
+metaDataFormat = "yaml"
+
+# Theme to use (located in /themes/THEMENAME/)
+theme = "ghostwriter"
+
+# Pagination
+paginate = 10
+paginatePath = "page"
+
+googleAnalytics = "UA-42522319-5"
+disqusShortname = "vabs-github-io"
+
+[Author]
+    name = "Vaibhav Somani"
+    # profile = "https://google.com/+XXX"
+
+[Taxonomies]
+    tag = "tags"
+
+[Params]
+    intro = true
+    headline = "Technical Musings"
+    description = "Thoughts on daily challenges"
+    github = "https://github.com/vabs"
+    # gitlab = "https://gitlab.com/XXX"
+    # linkedin = "https://linkedin.com/in/XXX/"
+    # gplus = "https://google.com/+XXX"
+    # twitter = "https://twitter.com/XXX"
+    # stackoverflow = "https://stackoverflow.com/users/XXX/YYY"
+    # email = "XXX@example.com"
+    opengraph = true
+    shareTwitter = true
+    # shareFacebook = true
+    shareGooglePlus = true
+    shareLinkedIn = true
+    dateFormat = "Mon, Jan 2, 2006"
+    highlightJsUrl = ""
+    highlightJsLocalUrl = ""
+	pygmentsUseClassic = false
+	pygmentsCodeFences = true
+	# monokai for example, see https://github.com/alecthomas/chroma/tree/master/styles for flavours
+	pygmentsStyle = "monokai"
+
+[Permalinks]
+    post = "/:year/:month/:day/:filename/"
+
+[[menu.main]]
+    name = "Blog"
+    url = "/"
+    weight = 1
+
+
+[[menu.main]]
+    name = "Contact"
+    url = "/page/contact/"
+    weight = 3
+
+[[menu.main]]
+    name = "About"
+    url = "/page/about/"
+    weight = 4
