@@ -27,7 +27,7 @@ I have since create accounts in 51 different odd websites.
 
 Every solution has a feature of uploading resume. But apprantly not every software implements the proper processing of pdf. Even after uploading resume in the standard format, software can't process it. 
 
-<img src="/images/post/job-search-nightmare-2.png" alt="Dumb Software" align="center" />
+![Dumb Software](/images/post/job-search-nightmare-2.png)
 This solution doesn't work at all if you go a bit creative with your resume. I am not sure how designers use these websites for application as their resume will never be processed. They have to fill in the ever lasting form (8 pages - (back and forth)).
 I can understand this is a very hard problem to solve. But in this scenario the tech and HR has to come to an agreement of not having that dreaded big form.
 
@@ -36,7 +36,7 @@ I can understand this is a very hard problem to solve. But in this scenario the 
 
 The worst expericence which I had with one of the job posting was something like this.
 
-<img src="/images/post/job-search-nightmare-1.jpeg" alt="Redirection Hell" align="center" />
+![Redirection Hell](/images/post/job-search-nightmare-1.jpeg)
 I call this as **Redirection Hell**. This is just not the only path, with these 4 combinations you can create atleast 6 dumb ways of redirection before a potential candidate is even on the page to fill out any information.
 
 ---

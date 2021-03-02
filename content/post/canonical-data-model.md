@@ -2,7 +2,7 @@
 title: "Canonical Data Model"
 date: 2018-05-30T21:59:50-04:00
 draft: false
-featured: true
+featured: false
 tags: ["micro-services", "canonical data model", "api"]
 ---
 

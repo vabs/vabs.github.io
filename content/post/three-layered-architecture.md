@@ -10,7 +10,7 @@ tags: [api, api-design, design-guidelines, micro-services]
 Taking inspiration from the quote above; API design decisions should be driven by what precisely the API will link and what will be on either side of the interface. The architecture explained in this post is being popularized by Mulesoft API design architecture.
 
 
-<img src="/images/post/layered-architecture.png" align="center" />
+![Layered Architecture](/images/post/layered-architecture.png)
 <br />
 
 Let's explore this architecture and explain about what is the purpose of each layer and how are they interlinked.
@@ -57,7 +57,7 @@ The way I designed this layer was dividing the layer into 2 components.
 * Business Logic
 * Orchestration Logic    
 
-<img src="/images/post/process-layer.png" align="center" />
+![Process Layer](/images/post/process-layer.png)
 
 The segregation of different API endpoints and logic happens when following Domain Driven Design. The approach helps in reusability and breaking down dependency graphs. The orchestration layer also helps in following the design closely with business rules. 
 

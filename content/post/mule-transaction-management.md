@@ -25,7 +25,7 @@ Assume that email system in place is an un-reliable system as it is up only 60% 
 
 Let's first create a traditional mule flow.
 
-<img src="/images/post/basic-mule-flow.png" align="center" />
+![Mule Flow](/images/post/basic-mule-flow.png)
 
 As can see here, if `Step 1` is successful but `Step 2` is a failure. The error is caught though to rollback there should custom exception handling code required to be developed. Also maybe `Step 2` only failed because of a network connection. Since the message is already consumed by the exception strategy there is no way it can be resend.
 
@@ -126,8 +126,9 @@ The following steps talk about the implementation
 
 >Please find below a sample implementation of discussed strategy:
 
-<img src="/images/post/advanced-mule-flow.png" alt="Adavnced Mule Flow Strategy 1" align="center" />
-<img src="/images/post/advanced-mule-flow-2.png" alt="Adavnced Mule Flow Strategy 2" align="center" />
+![Adavnced Mule Flow Strategy 1](/images/post/advanced-mule-flow.png)
+![Adavnced Mule Flow Strategy 2](/images/post/advanced-mule-flow-2.png)
+
 <br />
 
 #### Pros:
