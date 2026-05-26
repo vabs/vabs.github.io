@@ -1,0 +1,107 @@
+{{ define "main" }}
+
+<section class="hero">
+  <div class="hero-inner">
+    <h1 class="hero-name">Vaibhav Somani</h1>
+    <p class="hero-tagline">Software engineer. Building things on the internet.</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="#projects">View Projects</a>
+      <a class="btn btn-ghost" href="{{ .Site.Params.github }}" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </div>
+</section>
+
+<section id="projects" class="section-projects">
+  <div class="section-inner">
+    <h2 class="section-title">Projects</h2>
+    <p class="section-subtitle">Personal experiments, tools, and games built in free time.</p>
+
+    <div class="filter-bar" role="group" aria-label="Filter projects">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="games">Games</button>
+      <button class="filter-btn" data-filter="tools">Tools</button>
+      <button class="filter-btn" data-filter="apps">Apps</button>
+      <button class="filter-btn" data-filter="academic">Academic</button>
+    </div>
+
+    <div class="projects-grid" id="projectsGrid">
+      {{ range hugo.Data.projects }}
+      <article class="card{{ if .private }} card-private{{ end }}" data-category="{{ .category }}">
+        <div class="card-header">
+          {{ if .private }}<span class="card-lock" title="Private repository">&#128274;</span>{{ end }}
+          <h3 class="card-title">{{ .display }}</h3>
+        </div>
+        <p class="card-desc">{{ .description }}</p>
+        <div class="card-meta">
+          <span class="lang-badge lang-{{ .language | lower | replaceRE "[^a-z]" "" }}">
+            <span class="lang-dot"></span>
+            <span class="lang-name">{{ .language }}</span>
+          </span>
+          {{ if gt .stars 0 }}
+          <span class="stars-badge">&#9733; {{ .stars }}</span>
+          {{ end }}
+          <span class="year-badge">{{ .year }}</span>
+        </div>
+        <div class="card-footer">
+          {{ if .private }}
+          <a class="btn btn-access" href="mailto:njoy.today@gmail.com?subject=Access Request: {{ .name }}&body=Hi Vaibhav,%0D%0A%0D%0AI'd like to request access to the {{ .display }} repository.%0D%0A%0D%0AThanks">Request Access</a>
+          {{ else }}
+          <a class="btn btn-github" href="{{ .github_url }}" target="_blank" rel="noopener noreferrer">View on GitHub</a>
+          {{ end }}
+        </div>
+      </article>
+      {{ end }}
+    </div>
+
+    <p class="no-results" id="noResults" style="display:none;">No projects match this filter.</p>
+  </div>
+</section>
+
+<section id="blog" class="section-blog">
+  <div class="section-inner">
+    <h2 class="section-title">Blog</h2>
+    <p class="section-subtitle">Thoughts on engineering challenges and system design.</p>
+    <ul class="post-list">
+      {{ range first 5 (where .Site.RegularPages "Section" "post") }}
+      <li class="post-item">
+        <a class="post-link" href="{{ .Permalink }}">{{ .Title }}</a>
+        <span class="post-date">{{ .Date.Format "Jan 2006" }}</span>
+      </li>
+      {{ end }}
+    </ul>
+    <div class="blog-more">
+      <a class="btn btn-ghost" href="/post/">View all posts &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<script>
+(function() {
+  var buttons = document.querySelectorAll('.filter-btn');
+  var cards = document.querySelectorAll('.card');
+  var noResults = document.getElementById('noResults');
+
+  buttons.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var filter = this.dataset.filter;
+
+      buttons.forEach(function(b) { b.classList.remove('active'); });
+      this.classList.add('active');
+
+      var visible = 0;
+      cards.forEach(function(card) {
+        if (filter === 'all' || card.dataset.category === filter) {
+          card.style.display = '';
+          visible++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      noResults.style.display = visible === 0 ? 'block' : 'none';
+    });
+  });
+})();
+</script>
+
+{{ end }}

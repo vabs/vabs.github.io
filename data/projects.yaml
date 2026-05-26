@@ -1,0 +1,403 @@
+# Games
+- name: "square-packing-game"
+  display: "Square Packing Game"
+  description: "Drag-and-drop puzzle: perfectly tile a grid using squares of sizes 1×1 up to N×N. A mathematics and logic challenge."
+  language: "TypeScript"
+  year: 2026
+  category: "games"
+  private: false
+  github_url: "https://github.com/vabs/square-packing-game"
+  stars: 0
+
+- name: "tower-game-v1"
+  display: "Tower Game"
+  description: "Incremental tower-building game built in the browser. Stack blocks, manage resources, keep going."
+  language: "JavaScript"
+  year: 2026
+  category: "games"
+  private: false
+  github_url: "https://github.com/vabs/tower-game-v1"
+  stars: 0
+
+- name: "pumpkin-hunt"
+  display: "Pumpkin Hunt"
+  description: "Halloween-themed online game. Hunt pumpkins, race the clock."
+  language: "TypeScript"
+  year: 2025
+  category: "games"
+  private: true
+  github_url: ""
+  stars: 0
+
+- name: "snowball-fight-online"
+  display: "Snowball Fight Online"
+  description: "Multiplayer browser game — throw snowballs at friends in real time."
+  language: "JavaScript"
+  year: 2025
+  category: "games"
+  private: true
+  github_url: ""
+  stars: 0
+
+- name: "platformer"
+  display: "2D Multiplayer Platformer"
+  description: "Real-time multiplayer platformer built entirely in the browser. Smooth physics, multiple players, no server installation."
+  language: "JavaScript"
+  year: 2023
+  category: "games"
+  private: false
+  github_url: "https://github.com/vabs/platformer"
+  stars: 0
+
+- name: "sequence-game"
+  display: "Sequence Game"
+  description: "Digital implementation of the classic Sequence board game. Play against friends or the computer."
+  language: "TypeScript"
+  year: 2024
+  category: "games"
+  private: true
+  github_url: ""
+  stars: 0
+
+- name: "conwaysoldiers"
+  display: "Conway's Soldier"
+  description: "Interactive visualization of Conway's Soldier puzzle — a peg solitaire variant with a surprising impossibility result."
+  language: "JavaScript"
+  year: 2024
+  category: "games"
+  private: false
+  github_url: "https://github.com/vabs/conwaysoldiers"
+  stars: 0
+
+- name: "fortune-cookie"
+  display: "Fortune Cookie"
+  description: "Break open virtual fortune cookies in the browser. Each crack reveals a new fortune."
+  language: "JavaScript"
+  year: 2024
+  category: "games"
+  private: false
+  github_url: "https://github.com/vabs/fortune-cookie"
+  stars: 0
+
+- name: "tic-tac-toe"
+  display: "Tic Tac Toe"
+  description: "A classic game of Tic Tac Toe to play with friends in the browser."
+  language: "JavaScript"
+  year: 2023
+  category: "games"
+  private: false
+  github_url: "https://github.com/vabs/tic-tac-toe"
+  stars: 0
+
+- name: "match-cards"
+  display: "Match Cards"
+  description: "Memory card-matching game. Flip cards, find pairs, beat your time."
+  language: "JavaScript"
+  year: 2022
+  category: "games"
+  private: false
+  github_url: "https://github.com/vabs/match-cards"
+  stars: 0
+
+- name: "tower-of-hanoi"
+  display: "Tower of Hanoi"
+  description: "Interactive Tower of Hanoi puzzle with animated disk movements and configurable disk count."
+  language: "JavaScript"
+  year: 2022
+  category: "games"
+  private: false
+  github_url: "https://github.com/vabs/tower-of-hanoi"
+  stars: 0
+
+- name: "pumpkin"
+  display: "Pumpkin Carver"
+  description: "Halloween-themed interactive pumpkin carving experience in the browser."
+  language: "HTML"
+  year: 2025
+  category: "games"
+  private: false
+  github_url: "https://github.com/vabs/pumpkin"
+  stars: 0
+
+# Tools
+- name: "youtube-channel-name-converter"
+  display: "YouTube Channel ID Converter"
+  description: "Convert a YouTube channel name to its channel ID instantly. No API key required."
+  language: "HTML"
+  year: 2023
+  category: "tools"
+  private: false
+  github_url: "https://github.com/vabs/youtube-channel-name-converter"
+  stars: 10
+
+- name: "table-formatter"
+  display: "Table Formatter"
+  description: "Create formatted tables exportable as Slack messages or Markdown. Useful for sharing data in chat tools."
+  language: "JavaScript"
+  year: 2025
+  category: "tools"
+  private: false
+  github_url: "https://github.com/vabs/table-formatter"
+  stars: 2
+
+- name: "meeting-cost"
+  display: "Meeting Cost Calculator"
+  description: "Real-time calculator that shows how much a meeting costs as it runs, based on attendee salaries."
+  language: "JavaScript"
+  year: 2026
+  category: "tools"
+  private: true
+  github_url: ""
+  stars: 0
+
+- name: "task-ai"
+  display: "Task AI"
+  description: "AI-assisted task management and breakdown tool."
+  language: "JavaScript"
+  year: 2026
+  category: "tools"
+  private: true
+  github_url: ""
+  stars: 0
+
+- name: "story-point"
+  display: "Story Point Planner"
+  description: "Lightweight planning poker tool for agile teams — estimate story points without the overhead."
+  language: "JavaScript"
+  year: 2026
+  category: "tools"
+  private: true
+  github_url: ""
+  stars: 0
+
+- name: "recoveryplaybook"
+  display: "Recovery Playbook"
+  description: "Apple Silicon Mac DFU verification and guided restore runbooks. CLI-first recovery assistant written in Go."
+  language: "Go"
+  year: 2026
+  category: "tools"
+  private: true
+  github_url: ""
+  stars: 0
+
+- name: "runbook-to-autofix"
+  display: "Runbook to Autofix"
+  description: "Turn runbooks into permissioned, audited one-click remediations. Written in Go."
+  language: "Go"
+  year: 2026
+  category: "tools"
+  private: true
+  github_url: ""
+  stars: 0
+
+- name: "docs-parser"
+  display: "Docs Parser"
+  description: "Generate web forms directly from Word documents. Parses structure and produces interactive HTML forms."
+  language: "TypeScript"
+  year: 2023
+  category: "tools"
+  private: true
+  github_url: ""
+  stars: 0
+
+- name: "related-map"
+  display: "Related Map"
+  description: "Visualize related search terms as a concept map using Google's suggested search terms."
+  language: "JavaScript"
+  year: 2020
+  category: "tools"
+  private: false
+  github_url: "https://github.com/vabs/related-map"
+  stars: 1
+
+- name: "credit-card-number-verfication"
+  display: "Credit Card Mapper"
+  description: "Identify and validate credit card types from card number prefixes. Covers all major card networks."
+  language: "JavaScript"
+  year: 2023
+  category: "tools"
+  private: false
+  github_url: "https://github.com/vabs/credit-card-number-verfication"
+  stars: 0
+
+- name: "russian-math"
+  display: "Russian Peasant Multiplication"
+  description: "Interactive visualization of the Russian peasant multiplication algorithm — a clever ancient method using only doubling and halving."
+  language: "JavaScript"
+  year: 2023
+  category: "tools"
+  private: false
+  github_url: "https://github.com/vabs/russian-math"
+  stars: 0
+
+# Apps
+- name: "caricature"
+  display: "Caricature"
+  description: "A browser-based creative drawing and caricature tool."
+  language: "JavaScript"
+  year: 2026
+  category: "apps"
+  private: false
+  github_url: "https://github.com/vabs/caricature"
+  stars: 0
+
+- name: "cocktails"
+  display: "Cocktail Finder"
+  description: "Discover cocktails based on ingredients you have. Personal cocktail recipe manager."
+  language: "JavaScript"
+  year: 2025
+  category: "apps"
+  private: true
+  github_url: ""
+  stars: 0
+
+- name: "kya-banau"
+  display: "Kya Banau"
+  description: "Food recommendation app — suggests what to cook based on what you have at home."
+  language: "JavaScript"
+  year: 2025
+  category: "apps"
+  private: true
+  github_url: ""
+  stars: 0
+
+- name: "lets-settle"
+  display: "Let's Settle"
+  description: "Group expense splitting and debt settlement tracker. Figure out who owes what after group trips or dinners."
+  language: "TypeScript"
+  year: 2026
+  category: "apps"
+  private: true
+  github_url: ""
+  stars: 0
+
+- name: "chorify"
+  display: "Chorify"
+  description: "Household chore management app — assign, track, and rotate chores across family members."
+  language: "TypeScript"
+  year: 2026
+  category: "apps"
+  private: true
+  github_url: ""
+  stars: 0
+
+- name: "compliment-cupid-slack"
+  display: "Compliment Cupid"
+  description: "Slack app that assigns a secret target and delivers anonymous compliments on a schedule. Spread positivity in teams."
+  language: "JavaScript"
+  year: 2026
+  category: "apps"
+  private: true
+  github_url: ""
+  stars: 0
+
+- name: "guestbook"
+  display: "Guestbook"
+  description: "Digital guestbook for home visitors — a modern take on the classic physical guestbook."
+  language: "JavaScript"
+  year: 2026
+  category: "apps"
+  private: true
+  github_url: ""
+  stars: 0
+
+- name: "unread"
+  display: "Unread"
+  description: "Personal read-later and bookmarks manager. Triage links, mark articles as read, stay on top of your reading list."
+  language: "TypeScript"
+  year: 2026
+  category: "apps"
+  private: true
+  github_url: ""
+  stars: 0
+
+- name: "whenImgone"
+  display: "When I'm Gone"
+  description: "A digital legacy app — store messages and information for loved ones to access when needed."
+  language: "TypeScript"
+  year: 2026
+  category: "apps"
+  private: true
+  github_url: ""
+  stars: 0
+
+- name: "money-tracker"
+  display: "Money Tracker"
+  description: "Track how money grows over time. Built to teach kids about compound interest and saving habits."
+  language: "JavaScript"
+  year: 2025
+  category: "apps"
+  private: false
+  github_url: "https://github.com/vabs/money-tracker"
+  stars: 0
+
+- name: "temporal-position"
+  display: "Temporal Position"
+  description: "Visual representation of where you are in time — day, week, month, year progress bars."
+  language: "JavaScript"
+  year: 2026
+  category: "apps"
+  private: false
+  github_url: "https://github.com/vabs/temporal-position"
+  stars: 0
+
+- name: "annotations-app"
+  display: "Annotations App"
+  description: "Document annotation tool — highlight, comment, and collaborate on text."
+  language: "TypeScript"
+  year: 2025
+  category: "apps"
+  private: true
+  github_url: ""
+  stars: 0
+
+- name: "family-tasks-planner"
+  display: "Family Tasks Planner"
+  description: "Shared task planner for families — coordinate errands, appointments, and household responsibilities."
+  language: "TypeScript"
+  year: 2025
+  category: "apps"
+  private: true
+  github_url: ""
+  stars: 0
+
+- name: "eci-data-analysis"
+  display: "ECI Seizure Data Analysis"
+  description: "Interactive data visualization of Election Commission of India seizure data during the 2019 General Elections."
+  language: "JavaScript"
+  year: 2019
+  category: "apps"
+  private: false
+  github_url: "https://github.com/vabs/eci-data-analysis"
+  stars: 0
+
+# Academic
+- name: "ANRL"
+  display: "ANRL"
+  description: "Advanced Networking Research Lab — network simulation and protocol implementation codebase from graduate research."
+  language: "C"
+  year: 2013
+  category: "academic"
+  private: false
+  github_url: "https://github.com/vabs/ANRL"
+  stars: 0
+
+- name: "COMP621"
+  display: "COMP 621"
+  description: "Compiler optimization coursework — analysis and transformation passes for a MATLAB-subset language."
+  language: "Java"
+  year: 2013
+  category: "academic"
+  private: false
+  github_url: "https://github.com/vabs/COMP621"
+  stars: 1
+
+- name: "outpost-public-api"
+  display: "Outpost Public API"
+  description: "RESTful public API for a hostel/accommodation finder service. Python backend built during a hackathon."
+  language: "Python"
+  year: 2014
+  category: "academic"
+  private: false
+  github_url: "https://github.com/vabs/outpost-public-api"
+  stars: 1
