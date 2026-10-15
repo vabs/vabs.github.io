@@ -117,7 +117,7 @@ Hash Join  (cost=12.4..210.6 rows=50 width=84)
               (actual rows=480 ...)   <-- estimated 5, got 480!
 ```
 
-When `rows` (estimate) and `actual rows` diverge by a large factor, the optimizer is flying blind. The cascade is the danger: an underestimate at a leaf node makes the optimizer pick a nested loop expecting 5 inner iterations, but it runs 4,800 — a plan that is catastrophically wrong because the *input* estimate was wrong, not the cost model.
+When `rows` (estimate) and `actual rows` diverge by a large factor, the optimizer is flying blind. The cascade is the danger: an underestimate at a leaf node makes the optimizer pick a nested loop expecting 5 iterations, but it runs 480 — a plan that is catastrophically wrong because the *input* estimate was wrong, not the cost model.
 
 ## When the optimizer gets it wrong, and what to do
 

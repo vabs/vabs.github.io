@@ -61,7 +61,7 @@ When writing your own scheduler-adjacent code, yield deliberately. A batch proce
 async function processItems(items) {
   for (let i = 0; i < items.length; i += 100) {
     processChunk(items.slice(i, i + 100));
-    await (scheduler.yield?.() ?? new Promise(requestAnimationFrame));
+    await (globalThis.scheduler?.yield?.() ?? new Promise(requestAnimationFrame));
   }
 }
 ```

@@ -22,15 +22,15 @@ The risk is that old and new versions serve traffic **simultaneously** for the e
 
 {{< mermaid >}}
 sequenceDiagram
-    participant LB as "Load Balancer"
-    participant V1 as "v1 instances"
-    participant V2 as "v2 instances"
-    Note over V1: "Start: 4x v1 serving"
-    V2->>LB: "2x v2 start, pass readiness"
-    LB->>V2: "route some traffic"
-    Note over V1,V2: "2x v1 + 2x v2 serving together"
-    V1->>LB: "2x v1 drain + terminate"
-    Note over V2: "End: 4x v2 serving"
+    participant LB as Load Balancer
+    participant V1 as v1 instances
+    participant V2 as v2 instances
+    Note over V1: Start: 4x v1 serving
+    V2->>LB: 2x v2 start, pass readiness
+    LB->>V2: route some traffic
+    Note over V1,V2: 2x v1 + 2x v2 serving together
+    V1->>LB: 2x v1 drain + terminate
+    Note over V2: End: 4x v2 serving
 {{< /mermaid >}}
 
 ### Blue-green deployment
@@ -80,12 +80,15 @@ The subtle bug almost everyone hits: there is a race between the load balancer r
 The fix is a deliberate `preStop` delay so the process keeps serving during the propagation window before it starts draining:
 
 ```yaml
-lifecycle:
-  preStop:
-    exec:
-      # keep serving while endpoint removal propagates
-      command: ["sh", "-c", "sleep 10"]
+# pod spec
 terminationGracePeriodSeconds: 45   # must exceed sleep + max request time
+containers:
+  - name: app
+    lifecycle:
+      preStop:
+        exec:
+          # keep serving while endpoint removal propagates
+          command: ["sh", "-c", "sleep 10"]
 ```
 
 The application must also catch `SIGTERM`, flip its readiness probe to failing, and then drain. The grace period must be longer than the longest expected request plus the preStop sleep, or the orchestrator will `SIGKILL` mid-request.
@@ -136,15 +139,15 @@ CONTRACT (deploy 3):
 
 {{< mermaid >}}
 sequenceDiagram
-    participant App as "Application versions"
+    participant App as Application versions
     participant DB as Schema
-    Note over DB: "Expand: add email_address, dual write"
-    App->>DB: "v1 writes email; v2 writes both"
-    Note over DB: "Both versions work simultaneously"
-    Note over DB: "Migrate: read new column"
-    App->>DB: "all instances on v2"
-    Note over DB: "Contract: drop old column"
-    App->>DB: "v3 only knows email_address"
+    Note over DB: Expand: add email_address, dual write
+    App->>DB: v1 writes email, v2 writes both
+    Note over DB: Both versions work simultaneously
+    Note over DB: Migrate: read new column
+    App->>DB: all instances on v2
+    Note over DB: Contract: drop old column
+    App->>DB: v3 only knows email_address
 {{< /mermaid >}}
 
 The same principle applies to adding a `NOT NULL` column (add nullable first, backfill, then add the constraint), removing a column (stop using it in code first, drop it a release later), and changing a column type (add new, dual-write, migrate reads, drop old). Each transformation is decomposed so that at every instant, the schema is compatible with whichever code versions are live.

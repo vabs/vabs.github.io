@@ -71,7 +71,7 @@ The TLB (translation lookaside buffer), which caches virtual-to-physical address
 | Cost component | Rough magnitude | Visible in microbenchmark? |
 |----------------|-----------------|----------------------------|
 | Mode transition (syscall) | ~50-300 ns | Yes |
-| Register save/restore | ~1-3 microsec | Yes |
+| Register save/restore | ~few hundred ns | Yes |
 | TLB flush (cross-process) | varies | Partially |
 | Cache repopulation | can be many microsec | No (deferred) |
 | Scheduler overhead | ~hundreds of ns | Yes |

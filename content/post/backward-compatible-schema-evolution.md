@@ -24,7 +24,7 @@ Three terms get used loosely; they are worth pinning down precisely.
 
 The combination you actually need depends on your rollout. In a rolling deploy, new instances come up while old ones still run, so for the duration you need *both* directions — **full compatibility** is the safe default for anything touched during a live deploy.
 
-The single most important rule follows directly: **adding optional fields is safe; removing or renaming fields is dangerous.** Old code ignores unknown new fields (forward compat) and tolerates missing new fields (backward compat) — but only if those fields are genuinely optional.
+The single most important rule follows directly: **adding optional fields is safe; removing or renaming fields is dangerous.** Old code ignores unknown new fields (forward compat) and new code tolerates those fields being missing from old data (backward compat) — but only if those fields are genuinely optional.
 
 ## The Expand-Contract Pattern
 
@@ -68,7 +68,7 @@ The hidden danger in SQL migrations is **locking**. Many DDL operations acquire 
 | `ALTER COLUMN TYPE` | Often full rewrite | Expand-contract via new column |
 | `ADD NOT NULL` | Full scan to validate | Add as `NOT VALID`, then `VALIDATE` |
 
-The classic foot-gun is adding a `NOT NULL` column with a non-constant default to a huge table — older engines rewrite every row under a lock. The safe sequence:
+The classic foot-gun is adding a `NOT NULL` column with a non-constant default to a huge table — the engine rewrites every row under a lock (older engines, such as PostgreSQL before 11, did so even for constant defaults). The safe sequence:
 
 ```sql
 -- Step 1: add nullable, no default (instant metadata change)

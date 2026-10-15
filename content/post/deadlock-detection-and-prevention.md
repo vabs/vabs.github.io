@@ -26,11 +26,10 @@ The classic illustration: two transactions each lock one row, then each tries to
 
 {{< mermaid >}}
 graph LR
-    T1["Transaction 1"] -->|"holds"| A["Row A"]
-    T2["Transaction 2"] -->|"holds"| B["Row B"]
+    A["Row A"] -->|"held by"| T1["Transaction 1"]
+    B["Row B"] -->|"held by"| T2["Transaction 2"]
     T1 -->|"wants"| B
     T2 -->|"wants"| A
-    A -.->|"cycle"| B
 {{< /mermaid >}}
 
 The arrows form a cycle, which is the visual signature of every deadlock. The entire field of deadlock handling is about either preventing that cycle from forming or detecting it once it does.

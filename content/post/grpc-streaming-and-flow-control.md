@@ -65,15 +65,15 @@ HTTP/2 flow control is credit-based. The receiver advertises a window size. The 
 
 {{< mermaid >}}
 sequenceDiagram
-    participant S as "Sender (server stream)"
-    participant R as "Receiver (client)"
-    R->>S: "Initial window = 64KB"
-    S->>R: "DATA 32KB (window now 32KB)"
-    S->>R: "DATA 32KB (window now 0KB)"
-    Note over S: "Blocked - no credit"
-    R->>R: "App reads buffered data"
-    R->>S: "WINDOW_UPDATE +64KB"
-    S->>R: "DATA resumes"
+    participant S as Sender (server stream)
+    participant R as Receiver (client)
+    R->>S: Initial window = 64KB
+    S->>R: DATA 32KB (window now 32KB)
+    S->>R: DATA 32KB (window now 0KB)
+    Note over S: Blocked - no credit
+    R->>R: App reads buffered data
+    R->>S: WINDOW_UPDATE +64KB
+    S->>R: DATA resumes
 {{< /mermaid >}}
 
 The headline consequence: **if the receiving application stops reading, the window drains to zero and the sender blocks.** That blocking is backpressure. It is a feature, not a bug. A well-behaved producer naturally slows to match the consumer.
@@ -85,7 +85,8 @@ The failure mode is when you defeat backpressure. If your server-streaming handl
 The HTTP/2 spec default initial window is 65,535 bytes per stream. For high-throughput streaming over high-latency links this is far too small: the bandwidth-delay product can exceed the window, so the sender is forced to stall waiting for `WINDOW_UPDATE` round trips. Most gRPC implementations raise the defaults and many support a *BDP estimator* (dynamic window scaling) that grows the window automatically based on observed throughput and RTT.
 
 ```go
-// Go server: enlarge windows and enable BDP-style scaling
+// Go server: enlarge windows to fixed sizes
+// (note: in grpc-go, setting these disables the dynamic BDP estimator)
 srv := grpc.NewServer(
     grpc.InitialWindowSize(1<<20),       // 1 MB per stream
     grpc.InitialConnWindowSize(1<<22),   // 4 MB per connection

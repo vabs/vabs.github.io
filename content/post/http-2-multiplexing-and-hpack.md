@@ -54,14 +54,16 @@ A stream is an independent, bidirectional sequence of frames within the connecti
 sequenceDiagram
     participant C as Client
     participant S as Server
-    C->>S: "HEADERS (stream 1) GET /index.html"
-    C->>S: "HEADERS (stream 3) GET /style.css"
-    C->>S: "HEADERS (stream 5) GET /app.js"
-    S->>C: "HEADERS (stream 1) 200 OK"
-    S->>C: "DATA (stream 5) chunk"
-    S->>C: "DATA (stream 1) chunk"
-    S->>C: "DATA (stream 3) 200 + chunk"
-    S->>C: "DATA (stream 1) chunk"
+    C->>S: HEADERS (stream 1) GET /index.html
+    C->>S: HEADERS (stream 3) GET /style.css
+    C->>S: HEADERS (stream 5) GET /app.js
+    S->>C: HEADERS (stream 1) 200 OK
+    S->>C: HEADERS (stream 5) 200 OK
+    S->>C: DATA (stream 5) chunk
+    S->>C: DATA (stream 1) chunk
+    S->>C: HEADERS (stream 3) 200 OK
+    S->>C: DATA (stream 3) chunk
+    S->>C: DATA (stream 1) chunk
 {{< /mermaid >}}
 
 Notice that the server interleaves DATA frames from streams 1, 3, and 5 in whatever order it likes. A slow response on stream 1 no longer blocks streams 3 and 5, because their frames can be sent in the gaps. This eliminates application-layer head-of-line blocking, which is the entire point.
@@ -71,12 +73,12 @@ Each stream moves through a lifecycle:
 {{< mermaid >}}
 stateDiagram-v2
     [*] --> idle
-    idle --> open: "send/recv HEADERS"
-    open --> half_closed_local: "send END_STREAM"
-    open --> half_closed_remote: "recv END_STREAM"
-    half_closed_local --> closed: "recv END_STREAM"
-    half_closed_remote --> closed: "send END_STREAM"
-    open --> closed: "RST_STREAM"
+    idle --> open: send/recv HEADERS
+    open --> half_closed_local: send END_STREAM
+    open --> half_closed_remote: recv END_STREAM
+    half_closed_local --> closed: recv END_STREAM
+    half_closed_remote --> closed: send END_STREAM
+    open --> closed: RST_STREAM
     closed --> [*]
 {{< /mermaid >}}
 

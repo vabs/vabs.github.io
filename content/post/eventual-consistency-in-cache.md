@@ -6,7 +6,7 @@ featured: false
 tags: [backend, caching, consistency, distributed-systems, replication]
 ---
 
-A cache exists to answer a read faster than the source of truth can. The moment you place a copy of data somewhere other than its authoritative home, you create the possibility that the copy and the source disagree. Eventual consistency is the honest name for the contract most caches actually offer: reads may return stale data for some window, but if writes stop, all replicas converge to the same value within a bounded time. This post digs into why that window exists, how to reason about it, and how to keep it small enough that your users never notice.
+A cache exists to answer a read faster than the source of truth can. The moment you place a copy of data somewhere other than its authoritative home, you create the possibility that the copy and the source disagree. Eventual consistency is the honest name for the contract most caches actually offer: reads may return stale data for some window, but if writes stop, all replicas eventually converge to the same value. This post digs into why that window exists, how to reason about it, and how to keep it small enough that your users never notice.
 
 ## What "eventual" actually means
 
@@ -37,10 +37,10 @@ A replicated cache (Redis with replicas, a multi-region setup) adds replication 
 
 {{< mermaid >}}
 sequenceDiagram
-  participant C as "Client"
-  participant DB as "Database (source of truth)"
-  participant P as "Cache primary"
-  participant R as "Cache replica"
+  participant C as Client
+  participant DB as Database (source of truth)
+  participant P as Cache primary
+  participant R as Cache replica
   C->>DB: write value=42
   DB-->>C: ack
   C->>P: invalidate key

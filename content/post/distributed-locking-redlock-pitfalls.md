@@ -69,17 +69,17 @@ Consider this sequence:
 
 {{< mermaid >}}
 sequenceDiagram
-  participant C1 as "Client 1"
-  participant M as "Redis Master"
-  participant R as "Redis Replica"
-  participant C2 as "Client 2"
-  C1->>M: "SET lock token1 NX PX 30000"
-  M-->>C1: "OK (lock held)"
-  Note over M,R: "Master crashes before replicating"
-  R->>R: "Promoted to master (no lock key)"
-  C2->>R: "SET lock token2 NX PX 30000"
-  R-->>C2: "OK (lock held)"
-  Note over C1,C2: "Both clients now believe they hold the lock"
+  participant C1 as Client 1
+  participant M as Redis Master
+  participant R as Redis Replica
+  participant C2 as Client 2
+  C1->>M: SET lock token1 NX PX 30000
+  M-->>C1: OK (lock held)
+  Note over M,R: Master crashes before replicating
+  R->>R: Promoted to master (no lock key)
+  C2->>R: SET lock token2 NX PX 30000
+  R-->>C2: OK (lock held)
+  Note over C1,C2: Both clients now believe they hold the lock
 {{< /mermaid >}}
 
 The master acknowledged the lock to Client 1 but crashed before the write propagated to the replica. The replica gets promoted, has no record of the lock, and happily grants it to Client 2. Mutual exclusion is violated. This is exactly the failover scenario Redlock was designed to address.
@@ -148,19 +148,19 @@ The only robust defense is a **fencing token** — a monotonically increasing nu
 
 {{< mermaid >}}
 sequenceDiagram
-  participant C1 as "Client 1"
-  participant L as "Lock Service"
-  participant S as "Storage"
-  participant C2 as "Client 2"
-  C1->>L: "acquire"
-  L-->>C1: "token = 33"
-  Note over C1: "GC pause, lock expires"
-  C2->>L: "acquire"
-  L-->>C2: "token = 34"
-  C2->>S: "write (token 34)"
-  S-->>C2: "OK, max token = 34"
-  C1->>S: "write (token 33)"
-  S-->>C1: "REJECTED (33 < 34)"
+  participant C1 as Client 1
+  participant L as Lock Service
+  participant S as Storage
+  participant C2 as Client 2
+  C1->>L: acquire
+  L-->>C1: token = 33
+  Note over C1: GC pause, lock expires
+  C2->>L: acquire
+  L-->>C2: token = 34
+  C2->>S: write (token 34)
+  S-->>C2: OK, max token = 34
+  C1->>S: write (token 33)
+  S-->>C1: REJECTED (33 < 34)
 {{< /mermaid >}}
 
 Even though Client 1 woke up thinking it held the lock, its stale token 33 is rejected. The storage layer becomes the final arbiter of mutual exclusion. Note that once you have fencing tokens enforced at the resource, the lock service itself only needs to provide monotonic tokens — and a single Redis instance with `INCR`, or any consensus system, suffices. Redlock's quorum stops being load-bearing.

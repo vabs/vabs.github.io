@@ -72,7 +72,7 @@ echo 1024 > /proc/sys/vm/nr_hugepages
 cat /sys/kernel/mm/transparent_hugepage/enabled
 ```
 
-A caution: Transparent Huge Pages can *hurt* latency-sensitive services. The kernel's background defragmentation (khugepaged) and the synchronous compaction that THP can trigger introduce unpredictable stalls. Many databases (Redis, MongoDB, Oracle) explicitly recommend disabling THP and using explicit huge pages instead.
+A caution: Transparent Huge Pages can *hurt* latency-sensitive services. The kernel's background defragmentation (khugepaged) and the synchronous compaction that THP can trigger introduce unpredictable stalls. Many databases (Redis, Oracle, and MongoDB before 8.0) explicitly recommend disabling THP, and some, like Oracle, recommend explicit huge pages instead.
 
 ## Demand paging, overcommit, and the OOM killer
 
@@ -93,7 +93,7 @@ For containers this matters even more: a cgroup memory limit caps RSS, and excee
 
 When free memory runs low, the kernel reclaims pages. Clean file-backed pages (page cache) can be dropped instantly since they can be re-read. Dirty pages must be written back first. Anonymous pages (heap, stack) have no file backing, so reclaiming them requires writing to **swap**.
 
-A small amount of swap is healthy — it lets the kernel evict genuinely cold anonymous pages and use that RAM for hot page cache. The `vm.swappiness` knob (0–100, default 60) tunes how aggressively the kernel prefers swapping anonymous pages versus dropping file cache.
+A small amount of swap is healthy — it lets the kernel evict genuinely cold anonymous pages and use that RAM for hot page cache. The `vm.swappiness` knob (0–200 since Linux 5.8, previously 0–100; default 60) tunes how aggressively the kernel prefers swapping anonymous pages versus dropping file cache.
 
 The pathological state is **thrashing**: the working set exceeds RAM, so the kernel constantly swaps pages out and faults them right back in. Major fault rate spikes, the disk saturates, CPU sits in I/O wait, and throughput collapses while the system appears "busy." The fix is never tuning — it is reducing the working set or adding RAM.
 

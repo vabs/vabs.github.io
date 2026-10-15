@@ -56,18 +56,18 @@ An AP system keeps answering on every reachable node, even when those nodes cann
 
 {{< mermaid >}}
 sequenceDiagram
-  participant U1 as "User in Region A"
-  participant NA as "Node A"
-  participant NB as "Node B"
-  participant U2 as "User in Region B"
-  Note over NA,NB: "Partition: A and B cannot communicate"
-  U1->>NA: "set cart = [book]"
-  NA-->>U1: "OK"
-  U2->>NB: "set cart = [pen]"
-  NB-->>U2: "OK"
-  Note over NA,NB: "Partition heals"
-  NA->>NB: "reconcile: merge carts"
-  Note over NA,NB: "cart = [book, pen] (conflict resolution)"
+  participant U1 as User in Region A
+  participant NA as Node A
+  participant NB as Node B
+  participant U2 as User in Region B
+  Note over NA,NB: Partition: A and B cannot communicate
+  U1->>NA: set cart = [book]
+  NA-->>U1: OK
+  U2->>NB: set cart = [pen]
+  NB-->>U2: OK
+  Note over NA,NB: Partition heals
+  NA->>NB: reconcile: merge carts
+  Note over NA,NB: cart = [book, pen] (conflict resolution)
 {{< /mermaid >}}
 
 Examples: Amazon Dynamo and its descendants (Cassandra, Riak), DNS, and many caches. These systems lean on techniques like vector clocks, last-write-wins, or CRDTs to resolve the conflicts that availability makes inevitable. The classic Dynamo example is the shopping cart: never refuse an "add to cart," reconcile divergent carts later, and accept that a removed item might occasionally reappear.
@@ -82,7 +82,7 @@ This is the more useful framing day to day, because the latency-versus-consisten
 
 | System | Partition behavior | Normal behavior | PACELC |
 | --- | --- | --- | --- |
-| Spanner | CP | Low latency at consistency cost (TrueTime) | PC/EC |
+| Spanner | CP | Consistency at latency cost (TrueTime commit wait) | PC/EC |
 | Cassandra | AP | Tunable, often favors latency | PA/EL |
 | DynamoDB | AP (tunable) | Eventual by default, strong on request | PA/EL |
 | etcd / ZooKeeper | CP | Consistency over latency | PC/EC |

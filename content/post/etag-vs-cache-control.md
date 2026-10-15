@@ -19,7 +19,7 @@ sequenceDiagram
     alt fresh
         B->>B: Use cached response
     else stale with ETag
-        B->>S: If-None-Match: "abc"
+        B->>S: If-None-Match: abc
         S-->>B: 304 Not Modified
         B->>B: Reuse body, update headers
     else no validator
@@ -113,7 +113,7 @@ curl -i https://example.com/data.json
 curl -i https://example.com/data.json -H 'If-None-Match: "users-v42"'
 ```
 
-For CDN-backed systems, inspect both origin and edge headers. Many CDNs add `Age`, `X-Cache`, `CF-Cache-Status`, `Fastly-Cache`, or similar diagnostics. A browser `MISS` may actually be an edge `HIT` plus browser validation, or an edge `MISS` caused by a cache key mismatch. Log the origin request path for `If-None-Match` and compare it to edge analytics.
+For CDN-backed systems, inspect both origin and edge headers. Many CDNs add `Age`, `X-Cache`, `CF-Cache-Status`, Fastly's `X-Served-By`, or similar diagnostics. A browser `MISS` may actually be an edge `HIT` plus browser validation, or an edge `MISS` caused by a cache key mismatch. Log the origin request path for `If-None-Match` and compare it to edge analytics.
 
 In application tests, assert the full lifecycle: first request returns `200` with validator, second conditional request returns `304`, changed content returns `200` with a new validator, and private responses include the right cache directives. For multi-server deployments, test two different app instances if possible.
 

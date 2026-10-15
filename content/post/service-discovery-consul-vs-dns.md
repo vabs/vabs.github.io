@@ -53,7 +53,7 @@ The limitations are structural, not implementation bugs:
 | No load metadata in A records | Pure round-robin only; no weighting, no locality awareness |
 | Silent record-size limits | Large instance sets overflow UDP DNS responses and truncate |
 
-The TTL problem is the killer. If you set a 30-second TTL, then for up to 30 seconds after an instance dies, resolvers may still hand its address to callers. Drop the TTL to 1 second and you hammer the DNS server and still cannot beat caching layers you do not control. Worse, many clients **ignore TTL entirely** — the classic JVM example caches DNS lookups for the lifetime of the process by default (`networkaddress.cache.ttl`), so a long-running service may never notice that an instance moved.
+The TTL problem is the killer. If you set a 30-second TTL, then for up to 30 seconds after an instance dies, resolvers may still hand its address to callers. Drop the TTL to 1 second and you hammer the DNS server and still cannot beat caching layers you do not control. Worse, many clients **ignore TTL entirely** — the classic JVM example uses its own cache policy (`networkaddress.cache.ttl`, 30 seconds by default) instead of the record's TTL, and caches successful lookups for the lifetime of the process when a security manager is installed, so a long-running service may never notice that an instance moved.
 
 {{< mermaid >}}
 graph TD

@@ -84,19 +84,19 @@ All 50 `author` resolvers call `load(id)` synchronously during the same tick. Da
 
 {{< mermaid >}}
 sequenceDiagram
-    participant R as "50 author resolvers"
-    participant L as "DataLoader"
-    participant DB as "Database"
-    R->>L: "load(1) ... load(50)"
-    Note over L: "Collect keys this tick"
-    L->>DB: "SELECT * FROM users WHERE id IN (1..50)"
-    DB-->>L: "50 rows"
-    L-->>R: "Resolve each promise by key"
+    participant R as 50 author resolvers
+    participant L as DataLoader
+    participant DB as Database
+    R->>L: load(1) ... load(50)
+    Note over L: Collect keys this tick
+    L->>DB: SELECT * FROM users WHERE id IN (1..50)
+    DB-->>L: 50 rows
+    L-->>R: Resolve each promise by key
 {{< /mermaid >}}
 
 ## The two contracts you must not break
 
-DataLoader's batch function has two non-negotiable rules. Violate them and you get silent data corruption.
+DataLoader's batch function has two non-negotiable rules. Violate them and you get silent data corruption or failed batches.
 
 **Rule 1: the output array must be the same length and order as the input keys.** DataLoader maps `result[i]` back to `keys[i]`. If your `SELECT ... IN` returns rows in arbitrary order (databases give no ordering guarantee without `ORDER BY`), and you return them as-is, user A gets user B's data. Always reindex by key, as the `Map` above does.
 
@@ -105,7 +105,7 @@ DataLoader's batch function has two non-negotiable rules. Violate them and you g
 | Mistake | Symptom |
 |---------|---------|
 | Return rows in DB order | Fields attached to wrong parents |
-| Drop missing keys | Off-by-one misalignment for all later keys |
+| Drop missing keys | Length mismatch; DataLoader rejects every load in the batch |
 | Reuse loader across requests | Stale data, cross-user cache leaks |
 | Create loader inside resolver | No batching (new loader per call) |
 
@@ -116,9 +116,10 @@ The single most common DataLoader bug is sharing a loader across requests. DataL
 The correct lifecycle is **one set of loaders per request**, created in the GraphQL context factory:
 
 ```javascript
-const server = new ApolloServer({
-  schema,
-  context: () => ({
+const server = new ApolloServer({ schema });
+
+const { url } = await startStandaloneServer(server, {
+  context: async () => ({
     userLoader: createUserLoader(),
     postsByAuthorLoader: createPostsByAuthorLoader(),
   }),

@@ -87,14 +87,14 @@ A **propagator** is the component that *injects* these headers when making an ou
 
 {{< mermaid >}}
 sequenceDiagram
-    participant A as "Service A"
-    participant B as "Service B"
-    A->>A: "start span (trace_id=T, span=S1)"
-    A->>B: "HTTP GET /pay\ntraceparent: 00-T-S1-01"
-    B->>B: "extract -> parent = S1, trace = T"
-    B->>B: "start span (trace_id=T, span=S2, parent=S1)"
-    B-->>A: "response"
-    A->>A: "end span S1"
+    participant A as Service A
+    participant B as Service B
+    A->>A: start span (trace_id=T, span=S1)
+    A->>B: HTTP GET /pay<br/>traceparent: 00-T-S1-01
+    B->>B: extract -> parent = S1, trace = T
+    B->>B: start span (trace_id=T, span=S2, parent=S1)
+    B-->>A: response
+    A->>A: end span S1
 {{< /mermaid >}}
 
 Because B reads `traceparent` and uses `S1` as its parent, B's spans join A's trace. Drop the header anywhere and the chain breaks: B starts a brand-new trace and the connection between the two services is lost forever.

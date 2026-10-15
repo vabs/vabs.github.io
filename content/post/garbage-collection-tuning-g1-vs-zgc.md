@@ -6,7 +6,7 @@ featured: false
 tags: [backend, jvm, gc, performance, java]
 ---
 
-Garbage collection is the JVM feature most developers ignore until a production incident forces them to care. A service that hums along at p50 latency of 5ms can suddenly spike to 800ms because a stop-the-world pause froze every thread to reclaim memory. Choosing and tuning the right collector is one of the highest-leverage things you can do for a latency-sensitive Java service. This post compares the two collectors that matter most for modern server workloads: G1 (the default since Java 9) and ZGC (the low-latency contender that went production-ready and non-generational in newer releases).
+Garbage collection is the JVM feature most developers ignore until a production incident forces them to care. A service that hums along at p50 latency of 5ms can suddenly spike to 800ms because a stop-the-world pause froze every thread to reclaim memory. Choosing and tuning the right collector is one of the highest-leverage things you can do for a latency-sensitive Java service. This post compares the two collectors that matter most for modern server workloads: G1 (the default since Java 9) and ZGC (the low-latency contender that went production-ready in Java 15 and generational in Java 21).
 
 ## The Fundamental Trade-off
 
@@ -50,7 +50,7 @@ G1 treats `MaxGCPauseMillis` as a *soft* goal. It sizes the young generation and
 
 ## How ZGC Works
 
-ZGC takes a radically different approach built around **colored pointers** and **load barriers**. The key insight: almost all of ZGC's work, including compaction (moving live objects to defragment the heap), happens concurrently with the application. The only stop-the-world pauses are tiny, bounded operations like scanning thread stack roots, and these do not grow with heap size.
+ZGC takes a radically different approach built around **colored pointers** and **load barriers**. The key insight: almost all of ZGC's work, including compaction (moving live objects to defragment the heap), happens concurrently with the application. The only stop-the-world pauses are tiny, bounded synchronization points (even thread-stack scanning has been concurrent since Java 16), and these do not grow with heap size.
 
 Colored pointers embed metadata bits directly in the object reference. When the application loads a reference, a **load barrier** checks those bits. If the object has been relocated, the barrier transparently fixes up the pointer and may help with concurrent relocation. This is how ZGC moves objects out from under a running application without stopping it.
 

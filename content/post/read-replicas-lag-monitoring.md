@@ -90,7 +90,7 @@ Alert when an inactive slot retains more WAL than you can afford, and have a run
 
 Lag is usually flat and small, then suddenly spikes. The causes cluster into a few categories:
 
-**Long-running queries on the replica.** By default, replaying WAL can conflict with queries reading old row versions. PostgreSQL must either cancel the query or pause replay. With `hot_standby_feedback = on` it pauses replay, which protects the query but grows replay lag for everyone. An analyst's 20-minute report on a replica can stall replication for the whole fleet.
+**Long-running queries on the replica.** By default, replaying WAL can conflict with queries reading old row versions. PostgreSQL must either cancel the query or pause replay. With a large `max_standby_streaming_delay` (or `-1`) it pauses replay, which protects the query but grows replay lag for everyone. An analyst's 20-minute report on a replica can stall replay for every reader on that replica.
 
 **Write bursts on the primary.** A bulk import, a backfill, or a schema migration generates WAL faster than the replica can apply it. Single-threaded WAL replay on the replica becomes the bottleneck. The byte lag balloons; time lag follows.
 
@@ -145,7 +145,7 @@ Dashboard the per-replica replay lag as a time series, overlaid with primary wri
 
 ## Synchronous replication: trading latency for zero lag
 
-If even seconds of lag are unacceptable for certain data, synchronous replication makes the primary wait for a replica to confirm before the commit returns. Lag for that path drops to zero, but every write now pays the round-trip to the replica, and if the synchronous replica is unavailable, writes block. PostgreSQL's `synchronous_commit` with quorum settings (`ANY 1 (replica_a, replica_b)`) lets you require acknowledgement from any one of several replicas, balancing durability against availability. Use it surgically for the data that truly needs it, not as a blanket setting.
+If even seconds of lag are unacceptable for certain data, synchronous replication makes the primary wait for a replica to confirm before the commit returns. With `synchronous_commit = remote_apply`, replay lag for that path drops to zero (the default `on` only waits for the replica to flush WAL, not replay it), but every write now pays the round-trip to the replica, and if the synchronous replica is unavailable, writes block. PostgreSQL's quorum syntax in `synchronous_standby_names` (`ANY 1 (replica_a, replica_b)`) lets you require acknowledgement from any one of several replicas, balancing durability against availability. Use it surgically for the data that truly needs it, not as a blanket setting.
 
 ## Summary
 

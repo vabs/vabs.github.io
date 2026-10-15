@@ -550,6 +550,20 @@ img { max-width: 100%; height: auto; display: block; }
   color: #cdd6f4;
 }
 
+/* Mermaid diagrams render dark text, so they need a light surface, not the code-block background */
+.post-content pre.mermaid, .page-content pre.mermaid {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  text-align: center;
+  padding: 1.5rem 1rem;
+}
+.post-content pre.mermaid svg, .page-content pre.mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
+
 .post-content table, .page-content table {
   width: 100%;
   border-collapse: collapse;

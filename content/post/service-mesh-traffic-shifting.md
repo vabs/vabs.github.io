@@ -123,13 +123,13 @@ Manually editing weights and squinting at dashboards does not scale. Progressive
 {{< mermaid >}}
 stateDiagram-v2
   [*] --> Initializing
-  Initializing --> Progressing: "canary deployed"
-  Progressing --> Analyzing: "weight increment applied"
-  Analyzing --> Progressing: "metrics pass, ramp up"
-  Analyzing --> RollingBack: "metrics fail threshold"
-  Progressing --> Promoting: "weight reached 100%"
-  Promoting --> [*]: "primary updated"
-  RollingBack --> [*]: "weight reset to 0%"
+  Initializing --> Progressing: canary deployed
+  Progressing --> Analyzing: weight increment applied
+  Analyzing --> Progressing: metrics pass, ramp up
+  Analyzing --> RollingBack: metrics fail threshold
+  Progressing --> Promoting: weight reached maxWeight
+  Promoting --> [*]: primary updated
+  RollingBack --> [*]: weight reset to 0%
 {{< /mermaid >}}
 
 A Flagger canary spec encodes the analysis criteria:
@@ -167,7 +167,7 @@ That last point is the most common analysis bug. Always gate promotion on a mini
 
 **Asymmetric resource provisioning.** The canary pod often gets the same replica count and limits as production, but receives a fraction of the traffic. If you later flip to 100% weight, the canary may be under-provisioned for full load. Scale the canary's capacity for its eventual share, not its current share.
 
-**Stale DestinationRule subsets.** If a VirtualService references a subset whose label selector matches no pods (because the version label was renamed), Envoy gets a route to nowhere and requests fail with `503 NR` (no route / no healthy upstream). Always apply DestinationRule changes before the VirtualService that depends on them.
+**Stale DestinationRule subsets.** If a VirtualService references a subset whose label selector matches no pods (because the version label was renamed), Envoy gets a route to nowhere and requests fail with `503` and Envoy flag `NR` or `UH` (no route / no healthy upstream). Always apply DestinationRule changes before the VirtualService that depends on them.
 
 **Mesh-external traffic bypass.** Traffic that enters from outside the mesh without going through a mesh gateway, or calls that bypass the sidecar (e.g., `hostNetwork` pods, or traffic on ports the sidecar doesn't intercept), is not subject to your weights. You can have a "10% canary" that an entire class of clients never participates in.
 

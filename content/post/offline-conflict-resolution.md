@@ -39,7 +39,7 @@ Last-write-wins is simple and sometimes correct for disposable preferences, read
 
 Field-level merge works well for independent fields. It fails when fields are coupled, such as `startDate` and `endDate`, or `subtotal`, `tax`, and `total`.
 
-Operation transform and CRDTs work for collaborative structures such as text and ordered lists, but they add metadata and algorithmic complexity.
+Operational transformation (OT) and CRDTs work for collaborative structures such as text and ordered lists, but they add metadata and algorithmic complexity.
 
 Manual resolution is appropriate when the domain has no safe automatic rule. The UI should show both versions, explain the conflicting fields, and let the user choose or combine. Do not dump raw JSON on users unless the product is for developers.
 

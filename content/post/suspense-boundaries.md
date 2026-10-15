@@ -49,7 +49,7 @@ Place boundaries where a user can still make sense of the page. The route header
 
 For streaming SSR, make the shell useful. Send metadata, navigation, page title, and stable layout immediately. Put slow personalized panels behind boundaries. This lets the browser paint orientation while the server waits on slower dependencies. If the fallback is the same height as the final content, the reveal feels like completion rather than layout breakage.
 
-For nested boundaries, define reveal order intentionally. A parent fallback that covers child fallbacks can make children irrelevant. A `SuspenseList` or framework equivalent can coordinate whether sections reveal together or independently. Use this when partial reveal would be noisy or when ordered content matters.
+For nested boundaries, define reveal order intentionally. A parent fallback that covers child fallbacks can make children irrelevant. A `SuspenseList` (still experimental in React) or framework equivalent can coordinate whether sections reveal together or independently. Use this when partial reveal would be noisy or when ordered content matters.
 
 ## Failure modes
 

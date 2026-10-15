@@ -5,7 +5,7 @@ draft: false
 tags: [frontend, performance, core-web-vitals, fid, javascript]
 ---
 
-First Input Delay measures the delay between a user's first interaction and the browser's ability to start running the corresponding event handler. It focuses on input delay, not handler execution or paint. Even though Interaction to Next Paint is now the broader responsiveness metric, FID remains a useful concept because the first interaction is often where users discover that a page only looked ready.
+First Input Delay measures the delay between a user's first interaction and the browser's ability to start running the corresponding event handler. It focuses on input delay, not handler execution or paint. Interaction to Next Paint replaced FID as the responsiveness Core Web Vital in March 2024, and Chrome's tools dropped FID in September 2024, but FID remains a useful concept because the first interaction is often where users discover that a page only looked ready.
 
 The mental model: FID is main-thread availability at the moment of first input. If JavaScript parsing, execution, hydration, style work, or a third-party script owns the main thread, the browser queues the input until that task finishes.
 

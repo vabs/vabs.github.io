@@ -10,7 +10,7 @@ tags: [backend, tls, security, cryptography, networking]
 
 TLS 1.3 (RFC 8446) is not an incremental tweak of TLS 1.2. It is a redesign that removed a decade of accumulated insecurity and shaved a full round trip off connection setup. The two headline numbers: a full handshake costs one round trip (1-RTT) instead of two, and resumed connections can send application data immediately (0-RTT). To understand how it achieves this, you need to follow the messages and the key derivation in lockstep.
 
-The redesign also took an opinionated stance on cryptography. TLS 1.2 was a museum of negotiable options, many of them broken: RSA key exchange, CBC mode ciphers vulnerable to padding oracles, RC4, compression (CRIME), renegotiation. TLS 1.3 deleted all of it. The only key exchange is ephemeral Diffie-Hellman, the only bulk ciphers are AEAD constructions, and the cipher suite no longer bundles the key exchange and signature algorithm together.
+The redesign also took an opinionated stance on cryptography. TLS 1.2 was a museum of negotiable options, many of them broken: RSA key exchange, CBC mode ciphers vulnerable to padding oracles, RC4, compression (CRIME), renegotiation. TLS 1.3 deleted all of it. The only public-key exchange is ephemeral Diffie-Hellman (PSK modes aside), the only bulk ciphers are AEAD constructions, and the cipher suite no longer bundles the key exchange and signature algorithm together.
 
 ## The 1-RTT full handshake
 
@@ -20,14 +20,14 @@ The central insight is that TLS 1.2 wasted a round trip negotiating which key ex
 sequenceDiagram
     participant C as Client
     participant S as Server
-    C->>S: "ClientHello + key_share + supported groups"
-    Note over S: "Pick group, compute shared secret"
-    S->>C: "ServerHello + key_share"
-    Note over S: "Now encrypted under handshake keys"
-    S->>C: "EncryptedExtensions, Certificate"
-    S->>C: "CertificateVerify, Finished"
-    Note over C: "Verify cert + signature"
-    C->>S: "Finished + Application Data"
+    C->>S: ClientHello + key_share + supported groups
+    Note over S: Pick group, compute shared secret
+    S->>C: ServerHello + key_share
+    Note over S: Now encrypted under handshake keys
+    S->>C: EncryptedExtensions, Certificate
+    S->>C: CertificateVerify, Finished
+    Note over C: Verify cert + signature
+    C->>S: Finished + Application Data
 {{< /mermaid >}}
 
 Walk through it message by message:
@@ -101,11 +101,11 @@ After a successful handshake, the server can send one or more **NewSessionTicket
 sequenceDiagram
     participant C as Client
     participant S as Server
-    C->>S: "ClientHello + PSK + early_data (0-RTT app data)"
-    Note over S: "Decrypt early data with early secret"
-    S->>C: "ServerHello + EncryptedExtensions"
-    S->>C: "Finished"
-    C->>S: "Finished + more application data"
+    C->>S: ClientHello + PSK + early_data (0-RTT app data)
+    Note over S: Decrypt early data with early secret
+    S->>C: ServerHello + EncryptedExtensions
+    S->>C: Finished
+    C->>S: Finished + more application data
 {{< /mermaid >}}
 
 The danger is **replay**. The early data is not protected by the fresh handshake nonce exchange, so a network attacker can capture the 0-RTT flight and resend it. A malicious replay of `GET /page` is harmless, but a replay of `POST /transfer?amount=1000` is not. The protocol cannot prevent replay by itself; it pushes the responsibility to the application.

@@ -101,11 +101,11 @@ def apply_deposit(event, read_db):
 {{< mermaid >}}
 stateDiagram-v2
   [*] --> Reading
-  Reading --> Applying: "fetch next event"
-  Applying --> Checkpointing: "update read model"
-  Checkpointing --> Reading: "save position (atomic with update)"
-  Applying --> Crashed: "process dies"
-  Crashed --> Reading: "restart, replay from last checkpoint"
+  Reading --> Applying: fetch next event
+  Applying --> Checkpointing: update read model
+  Checkpointing --> Reading: save position (atomic with update)
+  Applying --> Crashed: process dies
+  Crashed --> Reading: restart, replay from last checkpoint
 {{< /mermaid >}}
 
 ## Ordering Matters

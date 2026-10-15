@@ -96,10 +96,10 @@ The trade-off is memory and lookup cost: more points mean a larger sorted struct
 
 | vnodes per node | Approx. load std-dev across nodes |
 | --- | --- |
-| 1 | very high (±40% common) |
-| 20 | ~10% |
-| 100 | ~5% |
-| 500 | ~2% |
+| 1 | very high (~100%) |
+| 20 | ~22% |
+| 100 | ~10% |
+| 500 | ~4.5% |
 
 ## Bounded loads and hotspots
 
@@ -135,7 +135,7 @@ def get_nodes(self, key: str, replicas: int = 3):
 Consistent hashing is the quiet workhorse behind a lot of infrastructure:
 
 - **Distributed caches** like memcached client libraries and the original Amazon Dynamo paper use it to map keys to cache servers so that adding capacity does not flush everything.
-- **Database sharding** in Cassandra and ScyllaDB places token ranges on a ring; each node owns a contiguous set of token ranges, and replication walks the ring.
+- **Database sharding** in Cassandra and ScyllaDB places token ranges on a ring; each node owns one or more token ranges (one per vnode), and replication walks the ring.
 - **Layer-7 load balancers** (Envoy's `ring_hash` and `maglev` policies, HAProxy's `hash-type consistent`) use it to keep a client pinned to the same upstream for cache affinity and sticky sessions without a shared session store.
 
 ### Maglev: a different point in the design space

@@ -11,7 +11,7 @@ CSS containment lets an element promise that some of its internals do not affect
 
 {{< mermaid >}}
 graph TD
-  Change["change inside component"] --> Style["style containment limits selector effects"]
+  Change["change inside component"] --> Style["style containment scopes counters and quotes"]
   Change --> Layout["layout containment limits geometry effects"]
   Change --> Paint["paint containment clips invalidation"]
   Change --> Size["size containment removes intrinsic contribution"]

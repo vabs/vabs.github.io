@@ -34,9 +34,9 @@ If `rows affected` is zero, another transaction bumped the version between your 
 
 {{< mermaid >}}
 sequenceDiagram
-  participant A as "Client A"
-  participant B as "Client B"
-  participant DB as "Database"
+  participant A as Client A
+  participant B as Client B
+  participant DB as Database
   A->>DB: read v7
   B->>DB: read v7
   A->>DB: update WHERE version=7 -> v8

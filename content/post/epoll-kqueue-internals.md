@@ -101,10 +101,9 @@ for (;;) {
         break;            // drained; safe to return to epoll_wait
     if (n == -1 && errno == EINTR)
         continue;
-    if (n == 0) {         // peer closed
-        close(fd);
-        break;
-    }
+    // n == 0 (peer closed) or a real error
+    close(fd);
+    break;
 }
 ```
 
@@ -161,7 +160,7 @@ kqueue's single-call design reduces syscall count, and its filter model is genui
 
 ## Common pitfalls
 
-**The thundering herd.** If multiple threads call `epoll_wait` on the same epoll fd and an event arrives, several may wake for one event. `EPOLLEXCLUSIVE` mitigates this by waking only one waiter, important for multi-acceptor designs.
+**The thundering herd.** If multiple threads each have their own epoll fd watching the same listening socket and a connection arrives, all of them may wake for one event. `EPOLLEXCLUSIVE` (Linux 4.5+) mitigates this by waking only one (or a few) of those epoll instances, important for multi-acceptor designs.
 
 **Stale descriptors after close.** When you `close` a descriptor, the kernel removes it from the epoll interest list automatically *only if no other reference exists*. Dup'd descriptors keep the registration alive, leading to confusing phantom events. Explicitly `EPOLL_CTL_DEL` before close when in doubt.
 

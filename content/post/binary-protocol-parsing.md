@@ -136,7 +136,7 @@ TLV is everywhere — TLS extensions, DNS records, many IoT protocols — precis
 
 ## Variable-Length Integers (Varint)
 
-Fixed-width integers waste space when most values are small. **Varint** encoding (used by Protobuf, QUIC, and others) uses the high bit of each byte as a continuation flag: if set, more bytes follow; the low 7 bits carry the value, little-endian across bytes.
+Fixed-width integers waste space when most values are small. **Varint** encoding (used by Protobuf, WebAssembly, and others) uses the high bit of each byte as a continuation flag: if set, more bytes follow; the low 7 bits carry the value, little-endian across bytes.
 
 ```python
 def read_varint(buf, off):

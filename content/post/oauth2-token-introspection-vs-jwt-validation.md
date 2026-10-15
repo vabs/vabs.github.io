@@ -73,7 +73,7 @@ With opaque tokens, the resource server holds no secret material. It calls the i
 ```http
 POST /introspect HTTP/1.1
 Host: issuer.example.com
-Authorization: Basic <client_id:client_secret>
+Authorization: Basic <base64(client_id:client_secret)>
 Content-Type: application/x-www-form-urlencoded
 
 token=mF_9.B5f-4.1JqM&token_type_hint=access_token
@@ -97,13 +97,13 @@ The single field that matters most is `active`. Per RFC 7662 a token is active o
 {{< mermaid >}}
 sequenceDiagram
     participant C as Client
-    participant RS as "Resource server"
-    participant AS as "Authz server"
-    C->>RS: "Request + opaque token"
-    RS->>AS: "POST /introspect (token)"
-    AS->>AS: "Look up + check revocation"
-    AS-->>RS: "{active:true, scope, sub}"
-    RS-->>C: "200 with protected resource"
+    participant RS as Resource server
+    participant AS as Authz server
+    C->>RS: Request + opaque token
+    RS->>AS: POST /introspect (token)
+    AS->>AS: Look up + check revocation
+    AS-->>RS: {active:true, scope, sub}
+    RS-->>C: 200 with protected resource
 {{< /mermaid >}}
 
 ## The core tradeoff: revocation vs latency

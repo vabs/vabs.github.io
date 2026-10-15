@@ -27,15 +27,15 @@ def create_and_show(profile):
 
 {{< mermaid >}}
 sequenceDiagram
-  participant App as "Application"
-  participant P as "Primary"
-  participant R as "Read Replica"
-  App->>P: "write(profile)"
-  P-->>App: "ack"
-  App->>R: "read(profile.id)"
-  Note over P,R: "replication still in flight"
-  R-->>App: "null (not replicated yet)"
-  Note over App: "renders empty / crashes"
+  participant App as Application
+  participant P as Primary
+  participant R as Read Replica
+  App->>P: write(profile)
+  P-->>App: ack
+  App->>R: read(profile.id)
+  Note over P,R: replication still in flight
+  R-->>App: null (not replicated yet)
+  Note over App: renders empty / crashes
 {{< /mermaid >}}
 
 **Fixes**, in order of preference:

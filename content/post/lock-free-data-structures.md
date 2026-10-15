@@ -91,7 +91,7 @@ public:
                !head.compare_exchange_weak(
                    old, old->next,
                    std::memory_order_acquire,
-                   std::memory_order_relaxed)) {
+                   std::memory_order_acquire)) {  // old is dereferenced next round
             // old refreshed on failure; retry.
         }
         if (!old) return false;

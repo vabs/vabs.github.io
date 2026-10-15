@@ -60,7 +60,7 @@ The foundational rule is that **a node may only act as primary if it can confirm
 | 5 | 3 | 2 |
 | 7 | 4 | 3 |
 
-This is why you almost always run an **odd** number of voting members. A 4-node cluster tolerates only 1 failure (same as 3) but doubles the chance any node fails — strictly worse. When a true majority cannot be reached, the correct behavior is to refuse writes rather than risk a second primary. Availability is sacrificed to preserve consistency, the classic CP choice in CAP terms.
+This is why you almost always run an **odd** number of voting members. A 4-node cluster tolerates only 1 failure (same as 3) but doubles the number of two-node failures that break quorum (six pairs instead of three) — strictly worse. When a true majority cannot be reached, the correct behavior is to refuse writes rather than risk a second primary. Availability is sacrificed to preserve consistency, the classic CP choice in CAP terms.
 
 Where you cannot afford a third full database node, deploy a lightweight **witness** or **arbiter** — a vote-only participant that holds no data but breaks ties.
 

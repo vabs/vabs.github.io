@@ -14,10 +14,12 @@ This post covers the backend mechanics of feature flagging: flag evaluation mode
 A flag is a function. Given a flag key and an evaluation context (user id, account tier, region, request attributes), it returns a variation. For a boolean flag that variation is `on` or `off`; for a multivariate flag it might be `control`, `treatment_a`, or `treatment_b`.
 
 ```python
-def evaluate(flag_key: str, context: dict) -> Variation:
+def evaluate(flag_key: str, context: dict, default: Variation) -> Variation:
     flag = store.get(flag_key)
-    if flag is None or not flag.enabled:
-        return flag.off_variation  # default / kill state
+    if flag is None:
+        return default  # unknown flag
+    if not flag.enabled:
+        return flag.off_variation  # kill state
     for rule in flag.rules:
         if rule.matches(context):
             return rule.resolve(context)

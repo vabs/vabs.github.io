@@ -23,7 +23,7 @@ The single most important concept in this entire topic is the distinction betwee
 
 - `kubectl drain` during a node upgrade.
 - Cluster autoscaler scaling down an underutilized node.
-- A node being cordoned for maintenance.
+- A node being drained for maintenance (cordoning alone evicts nothing).
 - A rolling update of the node pool.
 
 PDBs gate **only voluntary disruptions**. If a node dies, the budget does nothing — Kubernetes does not consult your PDB before a kernel panic. This is the first thing to internalize: a PDB is a contract with the *eviction subsystem*, not a guarantee of availability.
@@ -31,7 +31,7 @@ PDBs gate **only voluntary disruptions**. If a node dies, the budget does nothin
 {{< mermaid >}}
 graph TD
   A["Disruption Event"] --> B{"Voluntary?"}
-  B -->|"Yes: drain, autoscale, cordon"| C["Eviction API consulted"]
+  B -->|"Yes: drain, autoscaler scale-down"| C["Eviction API consulted"]
   C --> D{"PDB budget available?"}
   D -->|"Yes"| E["Pod evicted"]
   D -->|"No"| F["Eviction blocked (429)"]
@@ -68,13 +68,13 @@ spec:
 | `minAvailable: N` | At least N pods (or N%) must stay healthy | Fixed-floor services where you know the minimum |
 | `maxUnavailable: N` | At most N pods (or N%) may be down at once | Scaling deployments where the absolute count varies |
 
-Both fields accept either an integer or a percentage string like `"50%"`. Percentages are computed against `status.expectedPods` and rounded **up** for `minAvailable` and **down** for `maxUnavailable` — meaning percentages always err toward keeping more pods alive.
+Both fields accept either an integer or a percentage string like `"50%"`. Percentages are computed against `status.expectedPods` and rounded **up** for both fields — so `minAvailable` errs toward keeping more pods alive, while `maxUnavailable` can allow slightly more disruption than the percentage suggests.
 
-A subtle but critical rule: **you cannot use `maxUnavailable` with a percentage if the workload's scale subresource is unknown.** For bare pods (not backed by a controller with a scale subresource) `maxUnavailable` is rejected. Use `minAvailable` for those.
+A subtle but critical rule: **you cannot use `maxUnavailable`, or a percentage `minAvailable`, if the workload's scale subresource is unknown.** For bare pods (not backed by a controller with a scale subresource) Kubernetes cannot derive the expected pod count, so `maxUnavailable` does not work. Use an integer `minAvailable` for those.
 
 ### The arithmetic, worked out
 
-Say you run 5 replicas with `maxUnavailable: 25%`. Kubernetes computes `floor(5 * 0.25) = 1`. So `disruptionsAllowed = 1` when all 5 are healthy. Drain one node, one pod is evicted, now 4 healthy — `disruptionsAllowed` drops to 0 until the replacement pod becomes Ready. The drain on a second node blocks.
+Say you run 5 replicas with `maxUnavailable: 25%`. Kubernetes computes `ceil(5 * 0.25) = 2`. So `disruptionsAllowed = 2` when all 5 are healthy. Drain one node, one pod is evicted, now 4 healthy — `disruptionsAllowed` drops to 1. A second eviction takes it to 0 until a replacement pod becomes Ready, and the drain on a third node blocks.
 
 Now flip it: `minAvailable: 25%` gives `ceil(5 * 0.25) = 2`. The budget requires 2 healthy at all times, so `disruptionsAllowed = 5 - 2 = 3`. Very different posture from the same percentage.
 
@@ -93,7 +93,7 @@ If you have a single-replica workload that genuinely cannot tolerate disruption,
 
 ## Healthy Pod Eviction Policy
 
-A long-standing footgun was that pods stuck in a non-`Running` but not-`Ready` state (e.g., crash-looping) could block eviction forever because the budget never recovered. The `unhealthyPodEvictionPolicy` field, stable since Kubernetes 1.27, addresses this.
+A long-standing footgun was that pods stuck in a `Running` but not-`Ready` state (e.g., crash-looping) could block eviction forever because the budget never recovered. The `unhealthyPodEvictionPolicy` field (beta in Kubernetes 1.27, stable since 1.31) addresses this.
 
 ```yaml
 spec:
@@ -131,14 +131,14 @@ Here's the full state flow when an operator drains a node holding a budgeted pod
 
 {{< mermaid >}}
 stateDiagram-v2
-  [*] --> Cordoned: "kubectl drain"
-  Cordoned --> EvictAttempt: "schedule new pods elsewhere"
-  EvictAttempt --> Allowed: "disruptionsAllowed > 0"
-  EvictAttempt --> Blocked: "disruptionsAllowed == 0"
-  Blocked --> EvictAttempt: "retry after backoff"
-  Allowed --> Draining: "pod terminating"
-  Draining --> Recovered: "replacement pod Ready"
-  Recovered --> [*]: "node empty"
+  [*] --> Cordoned: kubectl drain
+  Cordoned --> EvictAttempt: schedule new pods elsewhere
+  EvictAttempt --> Allowed: disruptionsAllowed > 0
+  EvictAttempt --> Blocked: disruptionsAllowed == 0
+  Blocked --> EvictAttempt: retry after backoff
+  Allowed --> Draining: pod terminating
+  Draining --> Recovered: replacement pod Ready
+  Recovered --> [*]: node empty
 {{< /mermaid >}}
 
 The dangerous window is `Draining` → `Recovered`. If the replacement pod cannot schedule (no capacity, node selector unmatched, PVC bound to the old zone), the budget never recovers, and any subsequent drains block. PDBs assume that evicted pods get rescheduled promptly; if your scheduler can't place them, the whole mechanism stalls.

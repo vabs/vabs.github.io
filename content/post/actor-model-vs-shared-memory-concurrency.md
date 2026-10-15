@@ -114,10 +114,10 @@ The actor model's killer feature isn't just concurrency safety; it's fault toler
 {{< mermaid >}}
 stateDiagram-v2
   [*] --> Running
-  Running --> Failed: "exception while processing message"
-  Failed --> Restarting: "supervisor decides: restart"
-  Failed --> Stopped: "supervisor decides: stop"
-  Restarting --> Running: "fresh state, mailbox preserved"
+  Running --> Failed: exception while processing message
+  Failed --> Restarting: supervisor decides: restart
+  Failed --> Stopped: supervisor decides: stop
+  Restarting --> Running: fresh state, mailbox preserved
   Stopped --> [*]
 {{< /mermaid >}}
 

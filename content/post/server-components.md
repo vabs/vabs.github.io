@@ -25,7 +25,7 @@ The useful mental shift is that "where this component runs" becomes an architect
 
 ## Internals
 
-The server tree can access server-only resources: databases, private tokens, filesystem reads, and internal services. But the result must cross a serialization boundary. You cannot pass functions, class instances, open sockets, or arbitrary mutable objects to client components. You pass data.
+The server tree can access server-only resources: databases, private tokens, filesystem reads, and internal services. But the result must cross a serialization boundary. You cannot pass functions (other than Server Functions), class instances, open sockets, or arbitrary mutable objects to client components. You pass data.
 
 Client components are explicit islands marked by the framework, commonly with a directive such as `"use client"`. Once a component is client-side, its imported subtree usually becomes part of the client bundle. Accidentally putting a broad layout behind a client boundary can drag a large amount of code into the browser.
 
@@ -86,7 +86,7 @@ Another trap is leaking secrets through props. Server-only access does not prote
 
 Waterfalls can also appear on the server. If parent server components await data before rendering children that fetch their own data, total latency becomes sequential. Start independent fetches early or colocate them at a level that can run in parallel.
 
-Serialization surprises are common. Dates may become strings, `Map` and `Set` may not cross the boundary as expected, class instances lose methods, and large objects inflate the payload. Normalize data deliberately before passing it to client components.
+Serialization surprises are common. React's serializer handles dates, `Map`, and `Set`, but class instances are rejected, dates that arrived through a JSON API are already strings, and large objects inflate the payload. Normalize data deliberately before passing it to client components.
 
 Secret leakage is easy because the server has access to everything. A helper may return an internal user record with `emailVerified`, billing ids, flags, or tokens. If that object is passed wholesale into a client component, it becomes response data. Create DTOs for client props instead of passing database rows through convenience.
 

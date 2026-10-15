@@ -114,10 +114,10 @@ int data = 0;
 
 // Producer
 data = 42;
-ready.store(true, std::memory_order_release);   // release fence
+ready.store(true, std::memory_order_release);   // release store
 
 // Consumer
-if (ready.load(std::memory_order_acquire)) {    // acquire fence
+if (ready.load(std::memory_order_acquire)) {    // acquire load
     assert(data == 42);                         // guaranteed to hold
 }
 ```
@@ -134,7 +134,7 @@ The acquire/release pair is the workhorse of lock-free code. A **release** store
 
 The default, `seq_cst`, is the easiest to reason about (everything appears in one global order) but the most expensive, often requiring full barriers. Reaching for `relaxed` where you only need atomicity (like incrementing a statistics counter) avoids unnecessary fences.
 
-Java provides the same semantics through `volatile` (which gives acquire/release semantics on reads/writes) and the `java.util.concurrent.atomic` package, with VarHandles offering finer-grained control since Java 9.
+Java provides the same semantics through `volatile` (whose reads/writes are sequentially consistent, which subsumes acquire/release) and the `java.util.concurrent.atomic` package, with VarHandles offering finer-grained control since Java 9.
 
 ## A concrete publish pattern
 

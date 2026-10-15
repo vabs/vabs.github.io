@@ -66,7 +66,7 @@ The consequences compound:
 - **WAL and compaction pressure.** The write-ahead log and the block compaction process both do more work, increasing disk I/O and recovery time after a restart.
 - **Restart pain.** On startup Prometheus replays the WAL and rebuilds the head. A high-cardinality instance can take many minutes to become ready, during which you are blind.
 
-The cruel part is that the cost is paid even for series that receive only a single sample. A user who hits an endpoint once, never to return, still creates a series that lingers until it goes stale (roughly five minutes after the last sample) and is eventually marked for removal. Churn — series that appear and disappear constantly — is in some ways worse than a stable high count, because it thrashes the index.
+The cruel part is that the cost is paid even for series that receive only a single sample. A user who hits an endpoint once, never to return, still creates a series that the client library keeps exporting until the process restarts, and that stays in the head block until head compaction (every two hours by default) garbage-collects it once it stops being scraped. Churn — series that appear and disappear constantly — is in some ways worse than a stable high count, because it thrashes the index.
 
 ## Finding the offending metric
 
@@ -125,7 +125,7 @@ template, _ := route.GetPathTemplate() // "/users/{id}/profile"
 httpRequests.WithLabelValues(r.Method, status, template).Inc()
 ```
 
-Now the `endpoint` label has a value count equal to the number of routes in your application — a stable, small number.
+Now the `path` label has a value count equal to the number of routes in your application — a stable, small number.
 
 ### Push high-variety dimensions to logs or traces
 

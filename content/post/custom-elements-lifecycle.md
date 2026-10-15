@@ -15,8 +15,8 @@ stateDiagram-v2
   Connected --> Connected: attributeChangedCallback
   Connected --> Disconnected: disconnectedCallback
   Disconnected --> Connected: reattach
-  Connected --> Adopted: adoptedCallback
-  Adopted --> Connected
+  Disconnected --> Adopted: adoptedCallback (moved to new document)
+  Adopted --> Connected: connectedCallback
 {{< /mermaid >}}
 
 ## Constructor rules
@@ -120,7 +120,7 @@ If your element participates in forms, use form-associated custom elements delib
 
 Duplicate listeners are common because `connectedCallback` runs repeatedly. Memory leaks appear when observers survive after removal. Race conditions appear when async work resolves after disconnection and writes into stale DOM. Solve these with idempotent setup, abort controllers, and connection checks before applying results.
 
-Another failure is assuming upgrade order. If HTML is parsed before `customElements.define`, elements exist as unknown elements until definition loads. Attribute values and children may already be present when callbacks run. Test both parser-created and `document.createElement()` paths.
+Another failure is assuming upgrade order. If HTML is parsed before `customElements.define`, elements exist as undefined (plain `HTMLElement`) elements until definition loads. Attribute values and children may already be present when callbacks run. Test both parser-created and `document.createElement()` paths.
 
 There are also cross-document failures. `adoptedCallback` fires when an element moves to another document, for example into an iframe or a new `Document`. Any cached `ownerDocument`, global constructors, stylesheets, or document-level listeners may now point at the wrong place. Most elements never need adoption logic, but libraries and editors that move nodes between documents should handle it.
 

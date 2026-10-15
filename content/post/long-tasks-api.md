@@ -39,7 +39,7 @@ observer.observe({ type: "longtask", buffered: true });
 
 Each entry is a `PerformanceLongTaskTiming`. `startTime` is relative to the page's time origin and `duration` is the blocked interval. The useful part is not just the number; it is correlating that number with route transitions, input handlers, hydration, analytics scripts, and rendering bursts.
 
-The `attribution` field can identify a culprit container such as a same-origin frame, cross-origin frame, script, or unknown source depending on browser support and privacy restrictions. Treat it as a clue, not a profiler. The API is designed for production telemetry, where stack traces would be too heavy and privacy-sensitive.
+The `attribution` field can identify a culprit container such as the page itself, a same-origin frame, a cross-origin frame, or an unknown source depending on browser support and privacy restrictions. It does not name scripts; per-script attribution comes from the Long Animation Frames API. Treat it as a clue, not a profiler. The API is designed for production telemetry, where stack traces would be too heavy and privacy-sensitive.
 
 ## Practical instrumentation
 
@@ -48,25 +48,28 @@ Long-task telemetry should be sampled and annotated with application context. Ra
 Useful dimensions include route name, interaction name, visibility state, device memory bucket, connection type when available, and whether the app was hydrating, rendering a virtualized list, parsing a large response, or executing a known third-party integration.
 
 ```js
-let currentInteraction = "idle";
+// Observer callbacks run after the long task ends, so record a time
+// window and match entries against it instead of reading live state.
+let lastInteraction = { name: "idle", start: 0, end: 0 };
 
 export function markInteraction(name, fn) {
-  currentInteraction = name;
+  const start = performance.now();
   try {
     return fn();
   } finally {
-    queueMicrotask(() => {
-      currentInteraction = "idle";
-    });
+    lastInteraction = { name, start, end: performance.now() };
   }
 }
 
 new PerformanceObserver((list) => {
   for (const entry of list.getEntries()) {
+    const overlaps =
+      entry.startTime <= lastInteraction.end &&
+      entry.startTime + entry.duration >= lastInteraction.start;
     sendMetric("long_task", {
       duration: Math.round(entry.duration),
       start: Math.round(entry.startTime),
-      interaction: currentInteraction,
+      interaction: overlaps ? lastInteraction.name : "idle",
       route: location.pathname,
       hidden: document.visibilityState === "hidden",
     });

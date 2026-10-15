@@ -38,10 +38,10 @@ A circuit breaker is a small state machine wrapping every call to a dependency. 
 {{< mermaid >}}
 stateDiagram-v2
     [*] --> Closed
-    Closed --> Open: "failure threshold exceeded"
-    Open --> HalfOpen: "after cooldown timeout"
-    HalfOpen --> Closed: "trial calls succeed"
-    HalfOpen --> Open: "trial call fails"
+    Closed --> Open: failure threshold exceeded
+    Open --> HalfOpen: after cooldown timeout
+    HalfOpen --> Closed: trial calls succeed
+    HalfOpen --> Open: trial call fails
 {{< /mermaid >}}
 
 The transition rules deserve care:
@@ -120,8 +120,8 @@ ExecutorService poolB = new ThreadPoolExecutor(
     new ArrayBlockingQueue<>(16),               // bounded queue
     new ThreadPoolExecutor.AbortPolicy());      // reject when full
 
-Future<Result> f = poolB.submit(() -> callServiceB(req));
 try {
+    Future<Result> f = poolB.submit(() -> callServiceB(req));  // throws RejectedExecutionException when full
     return f.get(200, TimeUnit.MILLISECONDS);   // per-call timeout
 } catch (RejectedExecutionException | TimeoutException e) {
     return fallbackB();                          // shed load gracefully

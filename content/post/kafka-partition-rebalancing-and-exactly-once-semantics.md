@@ -95,17 +95,17 @@ The hard case is a stream processor: it consumes from input topics, does work, a
 
 {{< mermaid >}}
 sequenceDiagram
-  participant C as "Consumer"
-  participant App as "Processor"
-  participant P as "Transactional Producer"
-  participant T as "Transaction Coordinator"
-  C->>App: "poll records (input topic)"
-  App->>P: "beginTransaction()"
-  P->>P: "produce output records"
-  P->>T: "sendOffsetsToTransaction(input offsets)"
-  P->>T: "commitTransaction()"
-  T-->>P: "atomic: outputs + offsets committed together"
-  Note over C,T: "On crash before commit, transaction aborts;<br/>nothing is visible, offsets not advanced"
+  participant C as Consumer
+  participant App as Processor
+  participant P as Transactional Producer
+  participant T as Transaction Coordinator
+  C->>App: poll records (input topic)
+  App->>P: beginTransaction()
+  P->>P: produce output records
+  P->>T: sendOffsetsToTransaction(input offsets)
+  P->>T: commitTransaction()
+  T-->>P: atomic: outputs + offsets committed together
+  Note over C,T: On crash before commit, transaction aborts,<br/>nothing is visible, offsets not advanced
 {{< /mermaid >}}
 
 ```java
@@ -123,6 +123,7 @@ while (true) {
         producer.commitTransaction();        // atomic
     } catch (Exception e) {
         producer.abortTransaction();          // nothing leaks out
+        resetToLastCommitted(consumer);       // rewind so the batch is re-polled, not skipped
     }
 }
 ```

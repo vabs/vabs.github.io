@@ -22,7 +22,7 @@ JSON embeds field names and structure directly in the payload as UTF-8 text:
 { "userId": 1234567, "active": true, "score": 98.5 }
 ```
 
-That payload is 51 bytes. Every consumer can read it without any external schema, and a human can debug it with `curl`. The cost: field names are repeated in every single message, numbers are stored as decimal text, and there is parsing overhead to interpret the structure.
+That payload is 52 bytes. Every consumer can read it without any external schema, and a human can debug it with `curl`. The cost: field names are repeated in every single message, numbers are stored as decimal text, and there is parsing overhead to interpret the structure.
 
 Protobuf stores nothing but **field numbers, wire types, and values**, defined by a separate `.proto` schema:
 
@@ -42,12 +42,12 @@ Protobuf's size advantage comes from three mechanisms:
 
 1. **No field names on the wire.** A JSON message with verbose keys repeated across an array pays for those keys in every element. Protobuf pays once, in the schema.
 2. **Varint integers.** A value like `300` is two bytes in Protobuf versus three text characters in JSON; large structured integers compress far better.
-3. **Native types.** Booleans are one byte (often packed into the tag), not the five characters of `false`.
+3. **Native types.** Booleans are one byte (plus the tag byte), not the five characters of `false`.
 
 | Payload | JSON bytes | Protobuf bytes | Reduction |
 |---------|-----------|----------------|-----------|
-| Single small record | ~51 | ~15 | ~70% |
-| Array of 1000 records | ~51 KB | ~15 KB | ~70% |
+| Single small record | ~52 | ~15 | ~70% |
+| Array of 1000 records | ~52 KB | ~15 KB | ~70% |
 | Mostly-string content | smaller gap | smaller gap | ~10–30% |
 
 The catch worth stating plainly: **the advantage shrinks for string-heavy payloads.** Strings encode nearly identically in both formats (UTF-8 bytes plus a length prefix). Protobuf's edge is largest on numeric, boolean, and repetitive structured data, and smallest on free text.

@@ -9,9 +9,9 @@ The stale closure problem occurs when a function keeps references to values from
 
 {{< mermaid >}}
 flowchart TD
-  A[Render 1: count = 0] --> B[Create callback]
+  A["Render 1: count = 0"] --> B[Create callback]
   B --> C[Timer stores callback]
-  A --> D[Render 2: count = 1]
+  A --> D["Render 2: count = 1"]
   C --> E[Timer fires]
   E --> F[Callback still sees count = 0]
 {{< /mermaid >}}

@@ -23,7 +23,7 @@ flowchart TD
 
 `aria-atomic="true"` asks assistive technology to announce the whole region when any part changes. Without it, only the changed node may be announced. Use atomic regions for compact messages like "Saved at 10:42" where the full phrase is required. Avoid atomic on large containers because a small counter change can cause a long repeated announcement.
 
-`aria-relevant` controls which mutation types matter: additions, removals, text, or all. In practice, default behavior is usually enough. If you are implementing chat logs or activity feeds, `aria-relevant="additions text"` can be useful, but test with target screen readers.
+`aria-relevant` controls which mutation types matter: additions, removals, text, or all. In practice, the default (`additions text`) is usually enough. If you are implementing chat logs or activity feeds, `aria-relevant="additions"` can be useful, but test with target screen readers.
 
 ## Implementation patterns
 

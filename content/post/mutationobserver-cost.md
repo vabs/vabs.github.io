@@ -81,7 +81,7 @@ const observer = new MutationObserver((records) => {
 });
 ```
 
-Disconnect when inactive. Observers hold references to targets and callbacks. In single-page apps, forgetting `disconnect()` during unmount causes duplicate work and retained DOM.
+Disconnect when inactive. Observed nodes keep their observers and callbacks alive, and those callbacks often close over DOM and component state. In single-page apps, forgetting `disconnect()` during unmount causes duplicate work and retained DOM.
 
 ## Failure modes
 

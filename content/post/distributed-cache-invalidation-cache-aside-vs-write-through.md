@@ -100,7 +100,7 @@ sequenceDiagram
   W->>D: write new value (v2)
   W->>C: delete key
   R->>C: SET key = v1 (stale!)
-  Note over C: Cache now holds v1, DB holds v2 — permanently stale
+  Note over C: Cache now holds v1, DB holds v2 — stale until TTL expires
 {{< /mermaid >}}
 
 The reader read `v1`, the writer then committed `v2` and invalidated the cache — but the reader's `SET` lands *after* the invalidation, writing the stale `v1` back into a cache that should be empty. Now the cache serves `v1` until the TTL expires, even though the database says `v2`. This is not a transient blip; it is durable corruption of the cache.
@@ -129,7 +129,7 @@ def update_and_broadcast(user_id, data):
     redis.publish("invalidate", f"user:{user_id}")  # tell all nodes
 
 def on_invalidate(message):
-    local_cache.pop(message["key"], None)
+    local_cache.pop(message["data"], None)  # redis-py: payload is in "data"
 ```
 
 The hard part is that pub/sub delivery is not guaranteed — a node that was disconnected when the message fired never gets it and serves stale data indefinitely. This is why local caches with pub/sub invalidation almost always *also* carry a TTL: the TTL is the guarantee, the pub/sub is the optimization that makes invalidation fast in the common case.

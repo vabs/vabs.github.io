@@ -16,7 +16,7 @@ Taking inspiration from the quote above; API design decisions should be driven b
 Let's explore this architecture and explain about what is the purpose of each layer and how are they interlinked.
 
 ### System layer
-This is the foundation fo all of the APIs which is going to be build on top of it. This layer performs following roles:
+This is the foundation for all of the APIs which are going to be built on top of it. This layer performs following roles:
 
 * CRUD operations on datastores
 * Proxy for external systems
@@ -25,7 +25,7 @@ The design for the system layer should be thought on reusability. In my scenario
 
 This enabled me to share our source of truth of db schema and single point of change whenever changes are introduced in the underlying structure.
 
-There is a always a discussion on creating internal proxies on external system instead of accessing them directly. This results into longer response time though the pros of this approach outweighs that. Having a proxy in front of external systems, enabled me to create a [canonical data model](https://vabs.github.io/2018/05/30/canonical-data-model/). This also helped in integration with process layer as calling any external system, there is common response parser module determining if the system-layer API send a valid output for not. 
+There is always a discussion on creating internal proxies on external system instead of accessing them directly. This results into longer response time though the pros of this approach outweighs that. Having a proxy in front of external systems, enabled me to create a [canonical data model](https://vabs.github.io/2018/05/30/canonical-data-model/). This also helped in integration with process layer as calling any external system, there is common response parser module determining if the system-layer API sent a valid output or not. 
 
 For example:
 
@@ -63,12 +63,12 @@ The segregation of different API endpoints and logic happens when following Doma
 
 For example:
 
-> Business Requirement: When a user registers for on the website do following things
+> Business Requirement: When a user registers on the website do following things
 
 > 1. Check if the user exists in the existing systems
-> 2. Check the user against an multiple external identity service and prefill the information
+> 2. Check the user against multiple external identity services and prefill the information
 
-Let's assume we have an registration API and Search API. The business logic for the search API will be reused here to meet the requirement in 2. The logic can be used as a dependency and since checking against _multiple external identity services_, the registration API business logic can perform it in parallel. 
+Let's assume we have a registration API and Search API. The business logic for the search API will be reused here to meet the requirement in 2. The logic can be used as a dependency and since checking against _multiple external identity services_, the registration API business logic can perform it in parallel. 
 
 The modularity introduced helps in quick development and low maintainability costs.
 

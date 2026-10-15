@@ -10,10 +10,10 @@ Dynamic `import()` is both a language feature and a bundler signal. In applicati
 {{< mermaid >}}
 flowchart TD
   Entry[entry chunk] --> Router[router]
-  Router -->|import()| Admin[admin chunk]
-  Router -->|import()| Editor[editor chunk]
-  Editor -->|import()| Markdown[markdown parser chunk]
-  Editor -->|import()| Syntax[syntax highlighter chunk]
+  Router -->|"import()"| Admin[admin chunk]
+  Router -->|"import()"| Editor[editor chunk]
+  Editor -->|"import()"| Markdown[markdown parser chunk]
+  Editor -->|"import()"| Syntax[syntax highlighter chunk]
 {{< /mermaid >}}
 
 ## Internals that matter

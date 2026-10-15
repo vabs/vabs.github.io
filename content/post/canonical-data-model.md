@@ -7,7 +7,7 @@ tags: ["micro-services", "canonical data model", "api"]
 ---
 
 ### Definition
-> It's the model is a design pattern which defines the communication protocol between various enterprise systems.
+> It's a design pattern which defines the communication protocol between various enterprise systems.
 
 
 With software industry switching focus from monolithic apps to micro-services, there is always a need for the better communication model between each other. Most of the API based connectivity is architect for following proper REST principles and single responsibility. There is not much thought given for the communication model between the services.
@@ -47,11 +47,11 @@ The same definition by another developer can be written as
 }
 ```
 
-The merits of first definition is that it is easy to develope and if need any new property just can be added to the output response json. Though extending the output will result into more cluttering of unused and properties.
+The merits of first definition is that it is easy to develop and if need any new property just can be added to the output response json. Though extending the output will result into more cluttering of unused and properties.
 
 This is where the second approach is better as there is grouping of same types of output parameters. This also gives a lot of extensibility as if a new response type is to be added or an existing is to be removed.
 
-Though as the service mature the second approach also reaches a point where it's difficult to maintain. There are issues with backward compatibility as some output parameters now might be obsolete but still exists in the response. Also the new versions of API it's becomes difficult not to introduce breaking changes.
+Though as the service mature the second approach also reaches a point where it's difficult to maintain. There are issues with backward compatibility as some output parameters now might be obsolete but still exists in the response. Also the new versions of API it becomes difficult not to introduce breaking changes.
 
 Let's see a different approach to overcome this issue. The response has to be a standard format which can be emulated by every service in the same domain. It should have extensibility and scalability.
 
@@ -111,6 +111,6 @@ This approach can be standardized for all the domain in the organization. In res
 As someone said, nothing is perfect. Here are a few things to be considered when using this approach.
 
 * The canonical model is a transport model, hence should not contain or support any business rules.
-* The system generating the message is not required to generated all the values in the model. It should just generate what is defined in the system.
+* The system generating the message is not required to generate all the values in the model. It should just generate what is defined in the system.
 * The model should be kept updated with the service versions as to fulfill the contract between domain.
 * The consumer of the model should check about the expected version to ensure the correctness.

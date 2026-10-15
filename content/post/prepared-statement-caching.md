@@ -69,6 +69,7 @@ The most common way to defeat it accidentally is **inlining values instead of us
 db.execute(f"SELECT * FROM users WHERE id = {user_id}")
 
 # Uses the cache: one SQL string, values bound separately
+# (with a server-side-binding driver such as psycopg 3; psycopg2 interpolates client-side)
 db.execute("SELECT * FROM users WHERE id = %s", (user_id,))
 ```
 
@@ -133,7 +134,7 @@ Planning Time: 0.412 ms
 Execution Time: 0.087 ms
 ```
 
-When planning time dwarfs execution time and the query runs at high frequency, prepared statements are a clear win. When execution dominates, the parse/plan saving is noise and you should focus elsewhere. The `pg_stat_statements` extension aggregates planning vs execution time across all calls, making it easy to find the high-frequency, plan-heavy queries that benefit most.
+When planning time dwarfs execution time and the query runs at high frequency, prepared statements are a clear win. When execution dominates, the parse/plan saving is noise and you should focus elsewhere. The `pg_stat_statements` extension (with `pg_stat_statements.track_planning` enabled, which is off by default) aggregates planning vs execution time across all calls, making it easy to find the high-frequency, plan-heavy queries that benefit most.
 
 ## Practical guidance
 

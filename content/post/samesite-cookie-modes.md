@@ -18,7 +18,7 @@ graph TD
     B -->|No| D{"Cookie mode"}
     D -->|Strict| E["Blocked"]
     D -->|Lax| F["Sent only on safe top-level navigation"]
-    D -->|None; Secure| G["Sent cross-site"]
+    D -->|"None; Secure"| G["Sent cross-site"]
 {{< /mermaid >}}
 
 SameSite is best understood as a browser delivery rule, not a server authorization rule. The server still must validate sessions, origins, CSRF tokens, and permissions. SameSite only changes whether the cookie reaches the server for a given request context.
@@ -27,7 +27,7 @@ SameSite is best understood as a browser delivery rule, not a server authorizati
 
 `SameSite=Strict` sends the cookie only in same-site contexts. It is best for highly sensitive actions but can break normal flows where users arrive from email, chat, or another site and expect to be signed in immediately.
 
-`SameSite=Lax` sends cookies on same-site requests and on top-level cross-site navigations using safe methods like `GET`. It blocks most CSRF form posts and subresource requests while preserving common login navigation. Modern browsers default unspecified cookies toward Lax-like behavior, but you should set it explicitly.
+`SameSite=Lax` sends cookies on same-site requests and on top-level cross-site navigations using safe methods like `GET`. It blocks most CSRF form posts and subresource requests while preserving common login navigation. Chromium-based browsers default unspecified cookies toward Lax-like behavior (Firefox and Safari do not), but you should set it explicitly.
 
 `SameSite=None` allows cross-site sends, but it must be paired with `Secure`. Use it only when the product requires third-party contexts: iframes, embedded widgets, some SSO flows, or APIs called from a different site with credentials.
 

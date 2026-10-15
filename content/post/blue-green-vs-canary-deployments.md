@@ -112,7 +112,7 @@ spec:
   metrics:
     - name: success-rate
       interval: 1m
-      successCondition: result >= 0.99
+      successCondition: result[0] >= 0.99
       failureLimit: 2
       provider:
         prometheus:

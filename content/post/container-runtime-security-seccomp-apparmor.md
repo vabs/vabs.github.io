@@ -60,7 +60,7 @@ The available actions form a spectrum:
 | `SCMP_ACT_TRACE` | Hand off to a tracer (`ptrace`) for userspace policy |
 | `SCMP_ACT_KILL` | Terminate the thread/process with SIGSYS |
 
-The choice between `ERRNO` and `KILL` is a real design decision. Returning an errno is friendlier — well-behaved code degrades gracefully (for example, `glibc` may fall back when `statx` is blocked). Killing is stricter and surfaces violations loudly but can crash an app that probes for optional syscalls.
+The choice between `ERRNO` and `KILL` is a real design decision. Returning an errno is friendlier — well-behaved code degrades gracefully (for example, `glibc` falls back to an older stat syscall when `statx` returns `ENOSYS`). Killing is stricter and surfaces violations loudly but can crash an app that probes for optional syscalls.
 
 ### The default profiles already do a lot
 
@@ -94,7 +94,7 @@ grep -oE '^[0-9]+ +[a-z_0-9]+\(' trace.log \
   | sed -E 's/^[0-9]+ +//; s/\(//' | sort -u
 ```
 
-Tools like the OCI `seccomp-recorder`, Falco's syscall capture, or the Security Profiles Operator in Kubernetes can auto-generate a profile from observed behavior. Always exercise the full code path — error handling, signal handling, graceful shutdown — because rarely-hit branches make rarely-hit syscalls, and a profile that is too tight fails in production rather than testing.
+Tools like `oci-seccomp-bpf-hook` (Podman), Inspektor Gadget's `advise seccomp-profile`, or the Security Profiles Operator in Kubernetes can auto-generate a profile from observed behavior. Always exercise the full code path — error handling, signal handling, graceful shutdown — because rarely-hit branches make rarely-hit syscalls, and a profile that is too tight fails in production rather than testing.
 
 ## AppArmor: mediating resource access by path
 

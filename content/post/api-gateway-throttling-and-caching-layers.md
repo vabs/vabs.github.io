@@ -94,7 +94,7 @@ The script runs atomically, eliminating the race where two instances both read "
 
 ## Communicating Limits to Clients
 
-A throttle that returns a bare `429` is hostile. Well-behaved gateways tell clients what happened and when to retry, using standard headers:
+A throttle that returns a bare `429` is hostile. Well-behaved gateways tell clients what happened and when to retry, using standard (`Retry-After`) and IETF-draft (`RateLimit-*`) headers:
 
 ```
 HTTP/1.1 429 Too Many Requests

@@ -104,7 +104,7 @@ Storage engines are judged by three amplifications, and you cannot minimize all 
 | Write | Moderate (page rewrites + WAL) | Low at ingest, high over time (compaction rewrites data repeatedly) |
 | Space | Fragmentation, half-empty pages | Stale versions until compaction; tombstones linger |
 
-A subtle point about LSM write amplification: although the *initial* write is cheap, compaction may rewrite a given piece of data many times as it migrates down the levels. With leveled compaction and a 10x level ratio, total write amplification can reach 10x or more. The win is that this work is sequential and deferred, off the critical path, whereas a B-tree pays its (smaller) amplification synchronously with random I/O.
+A subtle point about LSM write amplification: although the *initial* write is cheap, compaction may rewrite a given piece of data many times as it migrates down the levels. With leveled compaction and a 10x level ratio, total write amplification can reach 10x or more. The win is that this work is sequential and deferred, off the critical path, whereas a B-tree pays its amplification synchronously with random I/O.
 
 ## When to choose which
 

@@ -92,12 +92,14 @@ size_t remaining = file_size;
 
 while (remaining > 0) {
     ssize_t sent = sendfile(socket_fd, file_fd, &offset, remaining);
-    if (sent <= 0) {
+    if (sent < 0) {
         if (errno == EAGAIN || errno == EINTR)
             continue;          // socket buffer full or interrupted
         perror("sendfile");
         break;
     }
+    if (sent == 0)
+        break;                 // EOF: file shorter than expected
     remaining -= sent;         // offset already advanced by the kernel
 }
 ```

@@ -41,7 +41,7 @@ When a packet is acknowledged, every unacknowledged packet sent sufficiently ear
 
 ### Time threshold
 
-Reordering can also be temporal. If a packet was sent more than a threshold of time before the most recently acknowledged packet, it is declared lost even if the packet-number gap is small. The threshold is derived from the smoothed RTT and its variation:
+Reordering can also be temporal. If a later packet has been acknowledged and an earlier packet was sent more than a threshold of time ago, the earlier one is declared lost even if the packet-number gap is small. The threshold is derived from the smoothed RTT and its variation:
 
 ```text
 time_threshold = max(kTimeThreshold * max(smoothed_rtt, latest_rtt),
@@ -49,21 +49,21 @@ time_threshold = max(kTimeThreshold * max(smoothed_rtt, latest_rtt),
 kTimeThreshold = 9/8
 ```
 
-A packet is lost if it is older than `largest_acked_time - time_threshold`.
+A packet is lost if it was sent before `now - time_threshold`.
 
 {{< mermaid >}}
 sequenceDiagram
     participant S as Sender
     participant R as Receiver
-    S->>R: "Packet 40 (stream A)"
-    S->>R: "Packet 41 (stream B) [LOST]"
-    S->>R: "Packet 42 (stream A)"
-    S->>R: "Packet 43 (stream A)"
-    R->>S: "ACK 40, 42, 43"
-    Note over S: "41 is 2+ below largest acked (43)"
-    Note over S: "and older than time threshold"
-    S->>S: "Declare packet 41 lost"
-    S->>R: "Packet 44: retransmit frames from 41"
+    S->>R: Packet 40 (stream A)
+    S->>R: Packet 41 (stream B) [LOST]
+    S->>R: Packet 42 (stream A)
+    S->>R: Packet 43 (stream C)
+    R->>S: ACK 40, 42, 43
+    Note over S: 41 is 2+ below largest acked (43)
+    Note over S: and older than time threshold
+    S->>S: Declare packet 41 lost
+    S->>R: Packet 44: retransmit frames from 41
 {{< /mermaid >}}
 
 ### ACK frames carry ranges
@@ -112,7 +112,7 @@ QUIC also tracks bytes in flight per connection and paces packet sending, smooth
 
 ## Connection migration changes the loss picture
 
-QUIC connections are identified by a **Connection ID**, not by the 4-tuple of IPs and ports. When a phone moves from Wi-Fi to cellular, its IP changes, which would kill a TCP connection. QUIC can continue on the new path using the same Connection ID. From a loss-recovery standpoint, a path change means RTT and bandwidth estimates may be stale, so QUIC validates the new path and is conservative until it has fresh measurements. This is a scenario TCP simply cannot handle without tearing down and re-establishing.
+QUIC connections are identified by a **Connection ID**, not by the 4-tuple of IPs and ports. When a phone moves from Wi-Fi to cellular, its IP changes, which would kill a TCP connection. QUIC can continue the same connection on the new path (typically switching to a fresh Connection ID issued by the peer, so the two paths cannot be linked). From a loss-recovery standpoint, a path change means RTT and bandwidth estimates may be stale, so QUIC validates the new path and is conservative until it has fresh measurements. This is a scenario TCP simply cannot handle without tearing down and re-establishing.
 
 ## Practical notes for operators
 

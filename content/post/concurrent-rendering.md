@@ -61,7 +61,7 @@ Another trap is assuming effects from abandoned renders ran. Effects run after c
 
 Reproduce with CPU throttling and artificial network delay. Concurrent issues are timing-sensitive, so fast local machines often hide them. Watch whether input remains responsive and whether pending UI communicates that work is happening.
 
-Use React Profiler lanes and interactions to see which updates are urgent or transition work. If a small input update renders a whole page, move state down or split providers. If a transition never settles, look for constantly changing dependencies.
+Use the React DevTools Profiler (including its Timeline view) to see which updates are urgent or transition work. If a small input update renders a whole page, move state down or split providers. If a transition never settles, look for constantly changing dependencies.
 
 Add cleanup assertions to effects. In development, confirm subscriptions are unsubscribed, timers are cleared, and async results are ignored after unmount or key changes.
 

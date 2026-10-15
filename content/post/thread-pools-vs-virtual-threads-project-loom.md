@@ -46,10 +46,10 @@ The magic is in **mounting** and **unmounting**. When a virtual thread runs, it 
 {{< mermaid >}}
 stateDiagram-v2
   [*] --> Runnable
-  Runnable --> Mounted: "scheduled on carrier"
-  Mounted --> Unmounted: "blocks on I/O, stack parked to heap"
-  Unmounted --> Runnable: "I/O completes"
-  Mounted --> [*]: "task finishes"
+  Runnable --> Mounted: scheduled on carrier
+  Mounted --> Unmounted: blocks on I/O, stack parked to heap
+  Unmounted --> Runnable: I/O completes
+  Mounted --> [*]: task finishes
 {{< /mermaid >}}
 
 This means a virtual thread blocked on a database call consumes **no carrier thread and almost no memory** while it waits. Its stack lives on the heap and grows on demand, starting at a few hundred bytes rather than a megabyte. You can have millions of them.
@@ -62,6 +62,7 @@ The beauty is that the code looks exactly like old-fashioned blocking code:
 // One virtual thread per task, blocking calls and all
 try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
     for (int i = 0; i < 1_000_000; i++) {
+        int id = i;  // lambdas capture only effectively-final locals
         executor.submit(() -> {
             // This blocks, but cheaply unmounts the virtual thread
             var user = userService.fetch(id);       // blocking HTTP
@@ -83,7 +84,7 @@ Virtual threads are not a free lunch in every case. A virtual thread can become 
 1. **Inside a `synchronized` block.** If a virtual thread blocks while holding a monitor via `synchronized`, older JVMs pinned it. The recommended fix was to replace `synchronized` with `ReentrantLock`, which Loom understands. (Recent JVM versions have largely eliminated synchronized-induced pinning, but legacy libraries may still trigger it.)
 2. **Inside a native method (JNI).** Blocking inside native code pins, because the JVM can't park a native stack frame to the heap.
 
-You can diagnose pinning by running with diagnostics enabled and watching for events that report pinned virtual threads:
+You can diagnose pinning by running with diagnostics enabled and watching for events that report pinned virtual threads (this flag works on JDK 21–23; JDK 24 removed it in favor of the JFR `jdk.VirtualThreadPinned` event):
 
 ```bash
 -Djdk.tracePinnedThreads=full
@@ -110,7 +111,7 @@ That last row matters. A bounded thread pool gives you free **backpressure**: wh
 ```java
 private final Semaphore dbPermits = new Semaphore(100);
 
-void handle() throws InterruptedException {
+List<Order> handle() throws InterruptedException {
     dbPermits.acquire();   // cap concurrent DB calls at 100
     try {
         return orderRepo.query();  // virtual thread unmounts while waiting
@@ -124,7 +125,7 @@ The semaphore limits concurrency at the resource (the database) rather than at t
 
 ## Structured Concurrency
 
-Loom ships alongside structured concurrency, which treats a group of concurrent subtasks as a single unit of work with a defined lifetime. It ensures that if you fan out to several services, they all complete or all get cancelled together, and errors propagate cleanly:
+Loom ships alongside structured concurrency (still a preview API, enabled with `--enable-preview`), which treats a group of concurrent subtasks as a single unit of work with a defined lifetime. It ensures that if you fan out to several services, they all complete or all get cancelled together, and errors propagate cleanly:
 
 ```java
 try (var scope = StructuredTaskScope.open()) {

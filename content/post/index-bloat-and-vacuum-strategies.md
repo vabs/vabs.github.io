@@ -70,7 +70,7 @@ Autovacuum is also deliberately throttled by `autovacuum_vacuum_cost_delay` and 
 
 Indexes bloat for the same MVCC reason, plus a wrinkle. When a row is updated, by default a new index entry must be created pointing to the new tuple, and the old index entry becomes dead. Over time, B-tree pages fill with dead pointers and become sparse — half-empty pages that still must be read and cached.
 
-`VACUUM` removes dead index entries but, like with tables, it does not compact the B-tree or return pages. A bloated index has more levels and more pages than it needs, so every lookup reads more pages and the index occupies more cache. You can measure index bloat directly:
+`VACUUM` removes dead index entries but, like with tables, it does not compact the B-tree or return pages. A bloated index has more levels and more pages than it needs, so every lookup reads more pages and the index occupies more cache. You can check index size and usage directly (the `pgstattuple` extension's `pgstatindex()` reports actual leaf density):
 
 ```sql
 SELECT indexrelname,
@@ -145,7 +145,7 @@ stateDiagram-v2
 
 ## The enemy of vacuum: long-running transactions
 
-One thing silently sabotages every vacuum strategy: a long-running transaction (or an idle-in-transaction connection, or a stale replication slot). Vacuum can only remove dead tuples that are invisible to *all* running transactions. A single transaction open for hours pins the visibility horizon — dead tuples created after it began cannot be cleaned, on *every* table, across the whole cluster. Bloat grows and XID age climbs even though autovacuum is running flat out.
+One thing silently sabotages every vacuum strategy: a long-running transaction (or an idle-in-transaction connection, or a stale replication slot). Vacuum can only remove dead tuples that are invisible to *all* running transactions. A single transaction open for hours pins the visibility horizon — dead tuples created after it began cannot be cleaned, on *every* table in that database (a stale replication slot pins it across the whole cluster). Bloat grows and XID age climbs even though autovacuum is running flat out.
 
 This ties index bloat back to operational hygiene from other corners of the system: an abandoned `idle in transaction` connection from a leaking pool, or a forgotten analyst session, can be the root cause of cluster-wide bloat and wraparound risk. Monitor `pg_stat_activity` for old transactions and set `idle_in_transaction_session_timeout`.
 

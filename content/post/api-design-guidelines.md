@@ -13,27 +13,27 @@ With the evolution of API, there are 2 major principles which drives the success
 
 1. **Platform Agnostic**: A client should be able to call the API, regardless of how the API is implemented internally. The complexity should be hidden and the contract between the API and the client should define the mechanism of data exchange.
 
-2. **Scalability**: An API should be able to scale without independent of client application dependency. The new functionality should be exposed and easily discoverable to the client.
+2. **Scalability**: An API should be able to scale independently of the client application. The new functionality should be exposed and easily discoverable to the client.
 
 
 ----------
 
 
 ## **Representational State Transfer API (REST API)**
-In 2000, Roy Fielding in his [dissertation](https://www.ics.uci.edu/~fielding/pubs/dissertation/top.html "Architectural Styles and
+In 2000, Roy Fielding in his [dissertation](https://www.ics.uci.edu/~fielding/pubs/dissertation/top.htm "Architectural Styles and
 the Design of Network-based Software Architectures") laid the foundation for REST architecture. REST is independent of any underlying protocol and is not necessarily tied to HTTP. However, most common REST implementations use HTTP as the application protocol, and this guide focuses on designing REST APIs for HTTP.
 
 
 The following outlines designing a REST API for Web Services Architecture.
 
-1.	[API Endpoint] (#api-endpoint)
-2.	[Authentication] (#authentication)
-3.	[Caching] (#caching)
-4.	[HTTP Methods (verbs)] (#http-verbs)
-5.	[HTTP Response Codes] (#response-codes)
-6.	[Query Parameters] (#query-params)
-7.	[Versioning] (#versioning)
-8.	[Checklist] (#checklist)
+1.	[API Endpoint](#api-endpoint)
+2.	[Authentication](#authentication)
+3.	[Caching](#caching)
+4.	[HTTP Methods (verbs)](#http-verbs)
+5.	[HTTP Response Codes](#response-codes)
+6.	[Query Parameters](#query-params)
+7.	[Versioning](#versioning)
+8.	[Checklist](#checklist)
 
 
 
@@ -52,7 +52,7 @@ The endpoint should have following features:
 The endpoint should be always authenticated to prevent from automated attacks. There are multiple ways of authenticating an endpoint. 
 
 * Token Based Authorization:
-    In token based authorization, a token should be given to the given along with the call to the endpoint. The token can have the client signature and the expiry time. The service should first validate the token before doing the processing. If the token configuration is invalid, the service should return the error with response code as `401`.
+    In token based authorization, a token should be given along with the call to the endpoint. The token can have the client signature and the expiry time. The service should first validate the token before doing the processing. If the token configuration is invalid, the service should return the error with response code as `401`.
 * Key Based Authorization:
     A key is provided with the request by the client. The key can be unique to each client. This also helps in doing rate-limiting and statistics on the api calls. The key should be validated for the correct client and the expiration before the processing. If invalidated, the service should return the error with response code as `401`.
 
@@ -87,7 +87,7 @@ The following table explains the usage of HTTP verbs
 </tr>
 <tr>
     <td> post </td>
-    <td> For persistance </td>
+    <td> For persistence </td>
     <td> 
         <table>
             <tr>
@@ -212,7 +212,7 @@ Query parameters can be used for following operations.
 |---|---|
 |Paging|	Required if the data returned by the service is more than 25 records at a time|
 |Filtering|	Required if data is to be filtered based on arguments. <br />Example: /test-service/test-resource?**resourceFilter=test1**|
-|Sorting|	Required if data is to be sorted in a particular order. <br />Example: /test-service/test-resource?**startDate=2016-01-1&endDate=2017-01-01**|
+|Sorting|	Required if data is to be sorted in a particular order. <br />Example: /test-service/test-resource?**sort=startDate&order=asc**|
 |Searching|	Required if data is to be retrieved based on query parameters but supports approximate matching|
 
 ---
@@ -265,11 +265,12 @@ This is a personal checklist which I use to review the code for APIs.
 
 3. All messages are defined for HTTP response codes associated with the request. <br />
 Example: Always define `200`, `400` and `500` responses.
-4. Always define `Content-Type` header to explicit say about the responses.
+4. Always define `Content-Type` header to explicitly say about the responses.
 5. Cache is used if possible
 6. Don't expose underlying data model in response. Only return what is required or is business need.
 
 <br />
+
 ### References:
 
 For further reading I would like to suggest an article in Microsoft's technical documentation.

@@ -56,9 +56,9 @@ The important knobs:
 | `retry_backoff` | Exponential delay (`True` = 2^n seconds) |
 | `retry_backoff_max` | Ceiling on the backoff delay |
 | `retry_jitter` | Randomize the delay to avoid synchronized retries |
-| `acks_late` | Ack only after the task completes, not on receipt |
+| `acks_late` | Ack only after the task completes, not just before it starts |
 
-`acks_late` deserves emphasis. By default Celery acks a task *when the worker receives it*. If the worker then dies mid-execution, the task is **not** redelivered — it's lost. Setting `acks_late=True` defers the ack until the task finishes, so a crash triggers redelivery. The catch: late acks plus a non-idempotent task means a crash *after the side effect but before the ack* causes a re-run that repeats the side effect. There is no free lunch; you trade lost-task risk for double-run risk, and idempotency is what makes the latter safe.
+`acks_late` deserves emphasis. By default Celery acks a task *just before the worker starts executing it*. If the worker then dies mid-execution, the task is **not** redelivered — it's lost. Setting `acks_late=True` defers the ack until the task finishes, so a crash triggers redelivery. The catch: late acks plus a non-idempotent task means a crash *after the side effect but before the ack* causes a re-run that repeats the side effect. There is no free lunch; you trade lost-task risk for double-run risk, and idempotency is what makes the latter safe.
 
 ### Explicit retry with control
 
@@ -107,6 +107,7 @@ BullMQ lets you define a custom backoff function, which is where you can impleme
 ```javascript
 const worker = new Worker("emails", processor, {
   settings: {
+    // only used for jobs added with backoff: { type: "custom" }
     backoffStrategy: (attemptsMade) => {
       const base = Math.pow(2, attemptsMade) * 1000;
       return base + Math.random() * 1000; // jitter
@@ -117,7 +118,7 @@ const worker = new Worker("emails", processor, {
 
 ### Stalled jobs
 
-BullMQ's analog to Celery's late-ack problem is **stalled job detection**. A job is "stalled" if a worker grabbed it but stopped renewing its lock (because it crashed or blocked the event loop). The `stalledInterval` and `maxStalledCount` settings control how aggressively BullMQ reclaims and retries such jobs. Critically, a job that legitimately takes longer than the lock duration can be falsely declared stalled and run concurrently in two workers — a self-inflicted double execution. Long-running jobs must either extend their lock or be broken into smaller pieces.
+BullMQ's analog to Celery's late-ack problem is **stalled job detection**. A job is "stalled" if a worker grabbed it but stopped renewing its lock (because it crashed or blocked the event loop). The `stalledInterval` and `maxStalledCount` settings control how aggressively BullMQ reclaims and retries such jobs. Critically, a job that blocks the event loop for longer than the lock duration (so the lock cannot be renewed) can be falsely declared stalled and run concurrently in two workers — a self-inflicted double execution. CPU-heavy jobs must either yield to the event loop, run in a sandboxed processor, or be broken into smaller pieces.
 
 ## Backoff Strategy Comparison
 
@@ -139,13 +140,13 @@ When a job exhausts its retries, it must go somewhere. Silently dropping it lose
 {{< mermaid >}}
 stateDiagram-v2
   [*] --> Pending
-  Pending --> Active: "worker picks up"
-  Active --> Completed: "success"
-  Active --> Retrying: "fail, attempts remain"
-  Retrying --> Active: "backoff elapsed"
-  Active --> Failed: "attempts exhausted"
-  Failed --> DeadLetter: "moved for inspection"
-  DeadLetter --> Pending: "manual / automated requeue"
+  Pending --> Active: worker picks up
+  Active --> Completed: success
+  Active --> Retrying: fail, attempts remain
+  Retrying --> Active: backoff elapsed
+  Active --> Failed: attempts exhausted
+  Failed --> DeadLetter: moved for inspection
+  DeadLetter --> Pending: manual / automated requeue
   Completed --> [*]
 {{< /mermaid >}}
 

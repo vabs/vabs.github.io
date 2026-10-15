@@ -138,7 +138,7 @@ class HyperLogLog:
 
     def add(self, hashed):              # hashed: a 64-bit hash of the item
         idx = hashed >> (64 - self.p)   # top p bits select the register
-        rest = (hashed << self.p) & ((1 << 64) - 1)
+        rest = hashed & ((1 << (64 - self.p)) - 1)  # remaining 64-p bits
         rank = (64 - self.p) - rest.bit_length() + 1  # leading zeros + 1
         self.registers[idx] = max(self.registers[idx], rank)
 

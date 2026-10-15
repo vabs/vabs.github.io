@@ -89,13 +89,13 @@ The headline property: leaky bucket produces a **smooth, constant output**. A sp
 
 {{< mermaid >}}
 sequenceDiagram
-    participant C as "Bursty client"
-    participant LB as "Leaky bucket queue"
-    participant S as "Backend"
-    C->>LB: "20 requests at once"
-    Note over LB: "Queue fills to capacity, rest dropped"
-    loop "every 1/r seconds"
-        LB->>S: "1 request (constant rate)"
+    participant C as Bursty client
+    participant LB as Leaky bucket queue
+    participant S as Backend
+    C->>LB: 20 requests at once
+    Note over LB: Queue fills to capacity, rest dropped
+    loop every 1/r seconds
+        LB->>S: 1 request (constant rate)
     end
 {{< /mermaid >}}
 

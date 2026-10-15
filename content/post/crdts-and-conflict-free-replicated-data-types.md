@@ -102,7 +102,7 @@ LWW still discards concurrent edits to the same element by timestamp, but it doe
 
 ### Sequence CRDTs for text
 
-Collaborative text editing (think Google Docs or Figma) needs a CRDT for ordered sequences. RGA, Logoot, and Yjs's YATA assign each character a unique, densely-orderable identifier so that concurrent insertions at the same position get a stable, deterministic ordering rather than fighting over an index. This is what lets two people type in the same paragraph offline and reconcile without scrambling each other's words.
+Collaborative text editing built on CRDTs (Google Docs itself uses operational transformation instead) needs a CRDT for ordered sequences. RGA, Logoot, and Yjs's YATA assign each character a unique, densely-orderable identifier so that concurrent insertions at the same position get a stable, deterministic ordering rather than fighting over an index. This is what lets two people type in the same paragraph offline and reconcile without scrambling each other's words.
 
 ## The causality problem
 
@@ -110,14 +110,14 @@ For operation-based CRDTs, "concurrent" must be defined precisely. The standard 
 
 {{< mermaid >}}
 sequenceDiagram
-  participant A as "Replica A"
-  participant B as "Replica B"
-  A->>A: "op1, clock [1,0]"
-  A->>B: "deliver op1"
-  B->>B: "apply op1, clock [1,0]"
-  B->>B: "op2, clock [1,1] (causally after op1)"
-  A->>A: "op3, clock [2,0] (concurrent with op2)"
-  Note over A,B: "op2 and op3 are concurrent;<br/>CRDT merge must handle both orders identically"
+  participant A as Replica A
+  participant B as Replica B
+  A->>A: op1, clock [1,0]
+  A->>B: deliver op1
+  B->>B: apply op1, clock [1,0]
+  B->>B: op2, clock [1,1] (causally after op1)
+  A->>A: op3, clock [2,0] (concurrent with op2)
+  Note over A,B: op2 and op3 are concurrent,<br/>CRDT merge must handle both orders identically
 {{< /mermaid >}}
 
 When the merge sees two concurrent operations, the semilattice/commutativity property guarantees the result is the same regardless of which it processes first. The vector clock is how the system *detects* concurrency so it can apply the right rule.

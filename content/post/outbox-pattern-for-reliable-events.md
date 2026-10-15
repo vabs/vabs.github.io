@@ -86,7 +86,7 @@ WHERE id IN (
 RETURNING id, aggregate_id, event_type, payload;
 ```
 
-`FOR UPDATE SKIP LOCKED` is the workhorse here. It lets multiple relay instances run concurrently: each grabs a disjoint batch of rows, skipping any that a sibling has already locked. This gives you horizontal scaling of the relay without distributed coordination.
+`FOR UPDATE SKIP LOCKED` is the workhorse here. It lets multiple relay instances run concurrently: each grabs a disjoint batch of rows, skipping any that a sibling has already locked. The row locks last only until the claiming transaction commits, so keep that transaction open while the batch is published. This gives you horizontal scaling of the relay without distributed coordination.
 
 After publishing each event and receiving a broker ack, the relay marks the row:
 
@@ -132,7 +132,7 @@ The event id flows from the outbox `id`, so it is stable across redeliveries. Co
 
 ## Ordering
 
-Many domains require events for a single aggregate to arrive in order: you cannot apply `OrderCancelled` before `OrderPlaced`. The outbox preserves order naturally because rows are written in commit order and the relay reads them ordered by `id`.
+Many domains require events for a single aggregate to arrive in order: you cannot apply `OrderCancelled` before `OrderPlaced`. The outbox preserves per-aggregate order naturally because writes to one aggregate are serialized and the relay reads them ordered by `id`. (Sequence ids are assigned at insert, not at commit, so order across concurrent transactions is not guaranteed.)
 
 To keep that ordering through the broker, route by `aggregate_id` so all events for one order land on the same partition. Within a partition Kafka preserves order; across partitions it does not. The trade-off is throughput: a hot aggregate funnels all its traffic to one partition. For most systems per-aggregate ordering with cross-aggregate parallelism is exactly the right granularity.
 
@@ -155,7 +155,7 @@ stateDiagram-v2
 
 **Monitoring.** The single most important metric is **outbox lag**: the age of the oldest unpublished row, `now() - min(created_at) WHERE published_at IS NULL`. If this grows, the relay is falling behind or stuck. Alert on it. Also track publish rate, attempt counts, and dead-letter volume.
 
-**Throughput.** A single-threaded polling relay tops out around a few thousand events per second. To go higher, run multiple relay instances with `SKIP LOCKED`, increase batch size, or move to CDC. Watch out for broker-side batching settings — `linger.ms` and `batch.size` on the producer dramatically affect effective throughput.
+**Throughput.** A single-threaded polling relay tops out around a few thousand events per second. To go higher, run multiple relay instances with `SKIP LOCKED`, increase batch size, or move to CDC. Watch out for producer batching settings — `linger.ms` and `batch.size` on the producer dramatically affect effective throughput.
 
 ## When not to use it
 

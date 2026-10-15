@@ -84,7 +84,7 @@ For pure sequential scans, the two are often within 10-20% of each other when th
 
 Many storage engines built their early versions on memory-mapped files because the programming model is seductive: the OS handles caching, eviction, and readahead for you. LMDB famously uses mmap for its entire read path, achieving extraordinary read throughput because cached reads are literally just pointer dereferences with no syscall.
 
-But there is a well-documented cautionary tale. The authors of WiredTiger and the broader database community have written about the pitfalls of relying on mmap for a serious storage engine. The core problems:
+But there is a well-documented cautionary tale. MongoDB replaced its mmap-based MMAPv1 engine with WiredTiger, and the database community (notably the CIDR 2022 paper "Are You Sure You Want to Use MMAP in Your Database Management System?") has written about the pitfalls of relying on mmap for a serious storage engine. The core problems:
 
 1. **No control over eviction.** The OS decides which pages to evict based on its own LRU-ish heuristics. A database often knows better which pages are hot, but mmap gives it no say.
 2. **No control over writeback timing.** Dirty pages get flushed by the kernel on its schedule, which can cause latency spikes (the dreaded writeback storm) and complicates durability guarantees.
@@ -99,13 +99,13 @@ The page fault is the heart of mmap's behavior, so it's worth understanding the 
 
 {{< mermaid >}}
 stateDiagram-v2
-  [*] --> Resident: "page already in RAM"
-  [*] --> MinorFault: "page in cache, not mapped"
-  [*] --> MajorFault: "page on disk"
-  MinorFault --> Resident: "map existing cache page"
-  MajorFault --> DiskRead: "schedule I/O"
-  DiskRead --> Resident: "page loaded and mapped"
-  Resident --> [*]: "dereference completes"
+  [*] --> Resident: page already in RAM
+  [*] --> MinorFault: page in cache, not mapped
+  [*] --> MajorFault: page on disk
+  MinorFault --> Resident: map existing cache page
+  MajorFault --> DiskRead: schedule I/O
+  DiskRead --> Resident: page loaded and mapped
+  Resident --> [*]: dereference completes
 {{< /mermaid >}}
 
 A **minor fault** happens when the page is already in the page cache (perhaps another process loaded it) but isn't yet mapped into your address space. The kernel just updates your page table. Cheap, microseconds.
@@ -125,7 +125,7 @@ madvise(p, len, MADV_DONTNEED);    // drop these pages from RAM
 
 For a sequential scan, `MADV_SEQUENTIAL` tells the kernel to read ahead aggressively and evict pages behind you, keeping the resident set small. For a random-access index, `MADV_RANDOM` disables readahead so you don't waste bandwidth pulling in pages you'll never touch. `MADV_WILLNEED` is essentially an asynchronous prefetch: issue it, do other work, and the pages should be resident by the time you need them, converting potential major faults into minor ones.
 
-Huge pages are another lever. A 4 GB mapping with 4 KB pages needs a million page table entries and constantly misses the TLB. Mapping with 2 MB huge pages cuts that to ~2000 entries, dramatically reducing TLB pressure for large working sets:
+Huge pages are another lever. A 4 GB mapping with 4 KB pages needs a million page table entries and constantly misses the TLB. Mapping with 2 MB huge pages cuts that to ~2000 entries, dramatically reducing TLB pressure for large working sets (note that `MAP_HUGETLB` only works for anonymous mappings or files on `hugetlbfs`, not regular filesystem files):
 
 ```c
 void *p = mmap(NULL, len, PROT_READ,

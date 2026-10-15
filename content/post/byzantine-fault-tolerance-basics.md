@@ -56,11 +56,11 @@ The phases exist to defeat the equivocation problem — a node telling different
 
 {{< mermaid >}}
 sequenceDiagram
-  participant C as "Client"
-  participant P as "Primary"
-  participant R1 as "Replica 1"
-  participant R2 as "Replica 2"
-  participant R3 as "Replica 3 (faulty)"
+  participant C as Client
+  participant P as Primary
+  participant R1 as Replica 1
+  participant R2 as Replica 2
+  participant R3 as Replica 3 (faulty)
   C->>P: request
   P->>R1: pre-prepare(m)
   P->>R2: pre-prepare(m)
@@ -105,7 +105,7 @@ BFT is expensive, and the bill comes in three parts:
 
 - **Message complexity.** The prepare and commit phases are all-to-all broadcasts, giving `O(n²)` messages per request. Doubling the replica count quadruples the chatter. This is why classic PBFT works well around a dozen nodes and poorly at hundreds.
 - **Cryptographic overhead.** Every message is signed or MAC-authenticated so receivers can prove provenance and detect forgery.
-- **Replica count.** You need `3f + 1` machines doing redundant work to tolerate `f` faults — 50% more hardware than a crash-fault system for the same `f`.
+- **Replica count.** You need `3f + 1` machines doing redundant work to tolerate `f` faults — `f` more machines (approaching 50% more hardware as `f` grows) than a crash-fault system for the same `f`.
 
 Modern descendants attack the `O(n²)` problem. HotStuff (used by Diem/Libra-lineage systems) linearizes communication to `O(n)` by routing through the leader and using threshold signatures to aggregate votes, which is why it scales to far more validators than classic PBFT.
 

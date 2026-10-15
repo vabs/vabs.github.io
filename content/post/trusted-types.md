@@ -29,7 +29,7 @@ Trusted Types protects injection sinks such as `innerHTML`, `outerHTML`, `insert
 Content-Security-Policy: require-trusted-types-for 'script'; trusted-types app-html;
 ```
 
-In Chromium-based browsers, assigning a normal string to a protected sink throws a `TypeError`. That failure is useful: it shows exactly where legacy code is still using raw strings. Other browsers have partial or no enforcement, so Trusted Types should be paired with normal sanitization and CSP rather than treated as the only defense.
+In supporting browsers, assigning a normal string to a protected sink throws a `TypeError`. That failure is useful: it shows exactly where legacy code is still using raw strings. Chromium has enforced it since version 83, but Safari (26) and Firefox (148) shipped support only recently, so older browsers still in use have no enforcement; Trusted Types should be paired with normal sanitization and CSP rather than treated as the only defense.
 
 Policies are JavaScript factories:
 
@@ -49,7 +49,7 @@ The protected sinks are the places where strings become executable or parseable 
 
 Policy creation is therefore the critical audit point. A policy that simply returns input is equivalent to turning the alarm off. A policy should either sanitize HTML, validate a URL against a strict allowlist, or reject input. Keep policy functions small enough to review and test with malicious fixtures.
 
-Trusted Types enforcement is currently strongest in Chromium-based browsers. That does not make it useless: it catches bugs for a large user population and, more importantly, forces the codebase into safer patterns. Non-supporting browsers still rely on the sanitizer, framework escaping, CSP, and server-side encoding.
+Trusted Types enforcement is new outside Chromium, so some of your users may still run browsers without it. That does not make it useless: it catches bugs for a large user population and, more importantly, forces the codebase into safer patterns. Non-supporting browsers still rely on the sanitizer, framework escaping, CSP, and server-side encoding.
 
 ## Practical rollout
 

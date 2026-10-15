@@ -60,13 +60,13 @@ On three duplicate ACKs, Reno sets `ssthresh = cwnd / 2`, sets `cwnd = ssthresh`
 {{< mermaid >}}
 stateDiagram-v2
     [*] --> SlowStart
-    SlowStart --> CongestionAvoidance: "cwnd >= ssthresh"
-    SlowStart --> SlowStart: "ACK doubles window"
-    CongestionAvoidance --> CongestionAvoidance: "ACK adds 1 MSS/RTT"
-    CongestionAvoidance --> FastRecovery: "3 dup ACKs"
-    FastRecovery --> CongestionAvoidance: "new ACK"
-    CongestionAvoidance --> SlowStart: "RTO timeout"
-    SlowStart --> SlowStart: "RTO resets cwnd to 1"
+    SlowStart --> CongestionAvoidance: cwnd >= ssthresh
+    SlowStart --> SlowStart: ACK doubles window
+    CongestionAvoidance --> CongestionAvoidance: ACK adds 1 MSS/RTT
+    CongestionAvoidance --> FastRecovery: 3 dup ACKs
+    FastRecovery --> CongestionAvoidance: new ACK
+    CongestionAvoidance --> SlowStart: RTO timeout
+    SlowStart --> SlowStart: RTO resets cwnd to 1
 {{< /mermaid >}}
 
 The classic sawtooth pattern of `cwnd` over time comes directly from AIMD: a slow ramp up, a sudden halving on loss, and another slow ramp.
@@ -87,7 +87,7 @@ CUBIC is the default congestion control on Linux and therefore on most servers y
 W(t) = C * (t - K)^3 + W_max
 
 W_max = window size at last loss
-K     = cube root of (W_max * beta / C)
+K     = cube root of (W_max * (1 - beta) / C)
 C     = scaling constant (default 0.4)
 beta  = multiplicative decrease factor (0.7)
 ```
@@ -109,15 +109,15 @@ The ideal operating point, the bandwidth-delay product, is `BtlBw * RTprop`. Tha
 
 {{< mermaid >}}
 sequenceDiagram
-    participant S as "BBR Sender"
-    participant N as "Bottleneck Link"
-    participant R as "Receiver"
-    S->>N: "Send at pacing rate"
-    N->>R: "Forward (BtlBw limited)"
-    R->>S: "ACK with delivery info"
-    S->>S: "Update BtlBw = max rate"
-    S->>S: "Update RTprop = min RTT"
-    S->>S: "inflight target = BtlBw * RTprop"
+    participant S as BBR Sender
+    participant N as Bottleneck Link
+    participant R as Receiver
+    S->>N: Send at pacing rate
+    N->>R: Forward (BtlBw limited)
+    R->>S: ACK with delivery info
+    S->>S: Update BtlBw = max rate
+    S->>S: Update RTprop = min RTT
+    S->>S: inflight target = BtlBw * RTprop
 {{< /mermaid >}}
 
 BBR cycles through states: it periodically probes for more bandwidth by briefly sending faster (ProbeBW), and periodically drains the queue to re-measure true RTprop (ProbeRTT). Because it does not need loss to back off, BBR maintains high throughput on lossy links and avoids filling deep buffers, directly attacking the two weaknesses of loss-based control.

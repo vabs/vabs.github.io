@@ -32,8 +32,11 @@ Range sharding makes **range scans efficient** — "all events between March 1 a
 The shard key is run through a hash function and the result modulo the shard count picks the shard.
 
 ```python
+import zlib
+
 def shard_for(key: str, num_shards: int) -> int:
-    return hash(key) % num_shards
+    # use a stable hash: Python's built-in hash() is randomized per process
+    return zlib.crc32(key.encode()) % num_shards
 ```
 
 Hashing spreads sequential keys uniformly, which kills the monotonic-write hot spot. The cost is that **range scans are destroyed** — adjacent keys land on different shards, so a range query must fan out to every shard and merge. Hash sharding is the right default when your access pattern is point lookups by key.
@@ -67,21 +70,27 @@ graph TD
 When you add a node, only the keys that fall in the arc between the new node and its predecessor move — roughly `1/N` of the data, not all of it. To avoid uneven arcs (a node owning a huge slice by luck), each physical node is placed at many positions on the ring using **virtual nodes**. A few hundred vnodes per physical node smooths the distribution and makes rebalancing finer-grained.
 
 ```python
+import bisect
+import hashlib
+
+def stable_hash(s: str) -> int:
+    return int.from_bytes(hashlib.md5(s.encode()).digest()[:8], "big")
+
 class ConsistentHashRing:
     def __init__(self, nodes, vnodes=200):
         self.ring = {}          # hash position -> node
         self.sorted_keys = []
         for node in nodes:
             for v in range(vnodes):
-                h = hash(f"{node}#{v}")
+                h = stable_hash(f"{node}#{v}")
                 self.ring[h] = node
                 self.sorted_keys.append(h)
         self.sorted_keys.sort()
 
     def get_node(self, key):
-        h = hash(key)
+        h = stable_hash(key)
         # binary search for first ring position >= h, wrapping around
-        idx = bisect.bisect(self.sorted_keys, h) % len(self.sorted_keys)
+        idx = bisect.bisect_left(self.sorted_keys, h) % len(self.sorted_keys)
         return self.ring[self.sorted_keys[idx]]
 ```
 
@@ -116,7 +125,7 @@ Reads now fan out across the `N` buckets and merge, trading a wider read for an 
 
 ### Split the celebrity
 
-For a single hot key (the celebrity user), salting splits its writes across sub-keys: `user_42#0`, `user_42#1`, ... `user_42#K`. Writes round-robin or hash across the `K` sub-shards; reads gather all `K`. This trades read amplification for write capacity and is worth it only for the handful of genuinely hot keys, applied selectively rather than globally.
+For a single hot key (the celebrity user), salting splits its writes across sub-keys: `user_42#0`, `user_42#1`, ... `user_42#(K-1)`. Writes round-robin or hash across the `K` sub-shards; reads gather all `K`. This trades read amplification for write capacity and is worth it only for the handful of genuinely hot keys, applied selectively rather than globally.
 
 ### Caching in front of read hot spots
 
@@ -126,7 +135,7 @@ If the hot partition is read-heavy (a viral post being fetched millions of times
 graph TD
     A["Incoming write for hot key"] --> B{"Key known to be hot?"}
     B -->|No| C["Route by hash to single shard"]
-    B -->|Yes| D["Append salt bucket 0..K"]
+    B -->|Yes| D["Append salt bucket 0..K-1"]
     D --> E["Route salted key to one of K shards"]
     F["Read for hot key"] --> G{"Cache hit?"}
     G -->|Yes| H["Serve from cache"]

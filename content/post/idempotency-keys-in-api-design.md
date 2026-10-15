@@ -16,9 +16,9 @@ The danger zone is the gap between a side effect committing and the client learn
 
 {{< mermaid >}}
 sequenceDiagram
-  participant C as "Client"
-  participant S as "Server"
-  participant DB as "Database"
+  participant C as Client
+  participant S as Server
+  participant DB as Database
   C->>S: POST /charges ($50)
   S->>DB: insert charge
   DB-->>S: committed

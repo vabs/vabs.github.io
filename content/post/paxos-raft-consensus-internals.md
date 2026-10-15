@@ -39,10 +39,10 @@ Once a majority accepts `(n, v)`, the value is chosen.
 
 {{< mermaid >}}
 sequenceDiagram
-  participant P as "Proposer"
-  participant A1 as "Acceptor 1"
-  participant A2 as "Acceptor 2"
-  participant A3 as "Acceptor 3"
+  participant P as Proposer
+  participant A1 as Acceptor 1
+  participant A2 as Acceptor 2
+  participant A3 as Acceptor 3
   P->>A1: prepare(n)
   P->>A2: prepare(n)
   P->>A3: prepare(n)
@@ -139,7 +139,7 @@ They offer the same fault tolerance (`f` failures out of `2f+1`) and the same sa
 
 ## Practical realities
 
-Both protocols share operational truths worth internalizing. Writes need a round trip to a majority, so consensus latency is bounded by your slowest *median* replica, not your fastest — placing replicas across distant regions makes every commit pay the inter-region RTT. A cluster of `2f+1` only stays available while a majority is up; lose the majority and the system correctly refuses writes rather than risk split-brain. And membership changes are dangerous if done naively — adding or removing nodes can momentarily create two overlapping majorities — which is why Raft specifies joint consensus to transition through a combined old-and-new configuration safely.
+Both protocols share operational truths worth internalizing. Writes need a round trip to a majority, so consensus latency is bounded by your slowest *median* replica, not your fastest — placing replicas across distant regions makes every commit pay the inter-region RTT. A cluster of `2f+1` only stays available while a majority is up; lose the majority and the system correctly refuses writes rather than risk split-brain. And membership changes are dangerous if done naively — adding or removing nodes can momentarily create two disjoint majorities — which is why Raft specifies joint consensus to transition through a combined old-and-new configuration safely.
 
 ## Conclusion
 

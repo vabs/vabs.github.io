@@ -16,7 +16,7 @@ sequenceDiagram
     participant UI
     participant Store
     participant API
-    UI->>Store: apply optimistic op #42
+    UI->>Store: apply optimistic op 42
     Store-->>UI: render predicted state
     Store->>API: send mutation with op id
     alt success with canonical payload
@@ -24,7 +24,7 @@ sequenceDiagram
         Store->>Store: replace prediction
     else validation/conflict/error
         API-->>Store: failure details
-        Store->>Store: rollback or reconcile op #42
+        Store->>Store: rollback or reconcile op 42
     end
 {{< /mermaid >}}
 

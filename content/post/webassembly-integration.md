@@ -23,7 +23,7 @@ flowchart LR
 
 A `.wasm` file exports functions and optionally memory. JavaScript loads it with `WebAssembly.instantiateStreaming` when the server returns `application/wasm`; otherwise it falls back to fetching an `ArrayBuffer` and compiling it. Framework bundlers wrap this with generated glue, but the runtime shape is the same.
 
-Linear memory is a resizable `ArrayBuffer`. The module sees offsets, not JavaScript objects. If a function accepts text, the adapter usually UTF-8 encodes the string into memory, passes pointer plus length, and decodes the returned region later. That is why a naive "call Wasm for every row" port can get slower than plain JavaScript. The CPU wins are erased by serialization and allocation.
+Linear memory is a growable block of bytes that JavaScript sees as an `ArrayBuffer` (replaced with a new one when memory grows). The module sees offsets, not JavaScript objects. If a function accepts text, the adapter usually UTF-8 encodes the string into memory, passes pointer plus length, and decodes the returned region later. That is why a naive "call Wasm for every row" port can get slower than plain JavaScript. The CPU wins are erased by serialization and allocation.
 
 The module cannot touch the DOM directly. It can import JavaScript functions, but every imported call is another boundary crossing. Prefer a design where Wasm computes a compact result and JavaScript renders it.
 

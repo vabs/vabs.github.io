@@ -22,19 +22,19 @@ The non-obvious part: pool exhaustion is usually a symptom of slow queries, not 
 
 {{< mermaid >}}
 sequenceDiagram
-    participant R as "Request"
-    participant P as "Pool"
+    participant R as Request
+    participant P as Pool
     participant DB as Database
-    R->>P: "acquire()"
+    R->>P: acquire()
     alt connection available
-        P->>R: "lease connection"
-        R->>DB: "query"
-        DB->>R: "result"
-        R->>P: "release()"
+        P->>R: lease connection
+        R->>DB: query
+        DB->>R: result
+        R->>P: release()
     else all in use
-        P->>R: "block in wait queue"
-        Note over P,R: "times out after acquireTimeout"
-        P->>R: "throw PoolTimeoutError"
+        P->>R: block in wait queue
+        Note over P,R: times out after acquireTimeout
+        P->>R: throw PoolTimeoutError
     end
 {{< /mermaid >}}
 
@@ -77,14 +77,14 @@ The interplay matters. Setting max lifetime longer than the load balancer's idle
 {{< mermaid >}}
 stateDiagram-v2
     [*] --> Idle
-    Idle --> InUse: "acquire (+validate)"
-    InUse --> Idle: "release"
-    Idle --> Closing: "idle timeout exceeded"
-    InUse --> Closing: "max lifetime exceeded"
-    Idle --> Closing: "validation failed"
+    Idle --> InUse: acquire (+validate)
+    InUse --> Idle: release
+    Idle --> Closing: idle timeout exceeded
+    InUse --> Closing: max lifetime exceeded
+    Idle --> Closing: validation failed
     Closing --> [*]
-    Idle --> Reaped: "externally killed (firewall/failover)"
-    Reaped --> Closing: "detected on next borrow"
+    Idle --> Reaped: externally killed (firewall/failover)
+    Reaped --> Closing: detected on next borrow
 {{< /mermaid >}}
 
 ## Pitfall 3: Leaked connections

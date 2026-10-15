@@ -86,12 +86,12 @@ The traditional approach: acquire shared locks on reads, exclusive locks on writ
 
 ### Serializable Snapshot Isolation (SSI)
 
-PostgreSQL's `SERIALIZABLE` uses a smarter, optimistic technique invented by Cahill, Fekete, and Rohm. It runs transactions under ordinary Snapshot Isolation but *tracks read-write dependencies* between concurrent transactions. The key insight: every non-serializable execution under SI contains a specific structure called a **dangerous skew** — two consecutive rw-dependency edges forming a cycle.
+PostgreSQL's `SERIALIZABLE` uses a smarter, optimistic technique invented by Cahill, Fekete, and Rohm. It runs transactions under ordinary Snapshot Isolation but *tracks read-write dependencies* between concurrent transactions. The key insight: every non-serializable execution under SI contains a specific structure called a **dangerous structure** — two consecutive rw-dependency edges that are part of a cycle.
 
 {{< mermaid >}}
 graph LR
     A["T1 reads X"] -->|"rw-dependency"| B["T2 writes X"]
-    B -->|"rw-dependency"| C["T3 writes data T1 read"]
+    B -->|"rw-dependency"| C["T3 writes data T2 read"]
     C -.->|"forms cycle"| A
     A --> D["SSI detects pivot, aborts one txn"]
 {{< /mermaid >}}

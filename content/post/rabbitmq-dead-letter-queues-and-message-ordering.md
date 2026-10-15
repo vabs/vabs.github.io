@@ -27,6 +27,7 @@ channel.queue_declare(
         "x-dead-letter-routing-key": "orders.dead",
     },
 )
+channel.exchange_declare(exchange="orders.dlx", exchange_type="direct")
 channel.queue_declare(queue="orders.dlq")
 channel.queue_bind(
     queue="orders.dlq", exchange="orders.dlx", routing_key="orders.dead"

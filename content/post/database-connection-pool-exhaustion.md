@@ -116,7 +116,7 @@ FROM pg_stat_activity
 GROUP BY state;
 ```
 
-A pile of `idle in transaction` is the smoking gun for cause #4 — transactions opened and abandoned. A pile of `active` with long durations points to slow queries (#2). Few connections from your app at all, despite timeouts, points to a leak shrinking the pool (#1).
+A pile of `idle in transaction` is the smoking gun for cause #4 — transactions opened and abandoned. A pile of `active` with long durations points to slow queries (#2). A pile of plain `idle` connections from your app while the pool reports every connection leased points to a leak (#1).
 
 What does the pool itself report? Every good pool exposes metrics: active count, idle count, pending (waiting) count, and total. The signature of exhaustion is **active == max_size and pending > 0 climbing**. Graph these four numbers; they tell you immediately whether you're leaking, saturated, or slow.
 

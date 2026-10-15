@@ -11,7 +11,7 @@ The mental model is move semantics for browser concurrency. After transfer, the 
 
 {{< mermaid >}}
 flowchart LR
-  A[Main thread ArrayBuffer] -->|postMessage without transfer| B[Clone: second buffer]
+  A[Main thread ArrayBuffer] -->|postMessage without transfer| B["Clone: second buffer"]
   C[Main thread ArrayBuffer] -->|postMessage with transfer list| D[Worker owns same backing store]
   C -. detached .-> X[byteLength becomes 0]
 {{< /mermaid >}}
