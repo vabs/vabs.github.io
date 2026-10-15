@@ -1,4 +1,14 @@
 # Games
+- name: "fishy"
+  display: "Fishy"
+  description: "Round-based fish catching game. Steer a net around a boat, bank your catch before the clock runs out, and spend earnings on a tech tree of upgrades and stranger fish."
+  language: "TypeScript"
+  year: 2026
+  category: "games"
+  private: false
+  github_url: "https://github.com/vabs/fishy"
+  stars: 0
+
 - name: "square-packing-game"
   display: "Square Packing Game"
   description: "Drag-and-drop puzzle: perfectly tile a grid using squares of sizes 1×1 up to N×N. A mathematics and logic challenge."
@@ -140,6 +150,66 @@
   github_url: "https://github.com/vabs/table-formatter"
   stars: 2
 
+- name: "ai-usage"
+  display: "AI Usage Dashboard"
+  description: "One dashboard for Claude, Codex and Gemini CLI subscription limits. Usage bars per window, live reset countdowns, and history pulled straight from vendor APIs."
+  language: "TypeScript"
+  year: 2026
+  category: "tools"
+  private: false
+  github_url: "https://github.com/vabs/ai-usage"
+  stars: 0
+
+- name: "project-template"
+  display: "Project Template"
+  description: "Starter for new ideas: Express 5, htmx, SQLite via Prisma and Redis-backed BullMQ workers in TypeScript, wired up with Docker Compose and pm2."
+  language: "TypeScript"
+  year: 2026
+  category: "tools"
+  private: false
+  github_url: "https://github.com/vabs/project-template"
+  stars: 0
+
+- name: "foundryvtt-todos"
+  display: "Foundry VTT Todos"
+  description: "Foundry VTT module for per-player todo lists with colored tags. The GM can share todos with players and track who has finished them."
+  language: "TypeScript"
+  year: 2026
+  category: "tools"
+  private: false
+  github_url: "https://github.com/vabs/foundryvtt-todos"
+  stars: 0
+
+- name: "ai-setup"
+  display: "Agent Runtime"
+  description: "Durable orchestration for autonomous agent workflows. PostgreSQL job queue, permissions, approvals and semantic memory, deployed with Docker Compose. Written in Python."
+  language: "Python"
+  year: 2026
+  category: "tools"
+  private: true
+  github_url: ""
+  stars: 0
+
+- name: "halloween-decorations"
+  display: "Halloween UI"
+  description: "43 spooky HTML controls as copy-paste snippets: bat-swarm buttons, spider-web inputs, pumpkin checkboxes. No framework, and native inputs stay underneath for accessibility."
+  language: "CSS"
+  year: 2026
+  category: "tools"
+  private: false
+  github_url: "https://github.com/vabs/halloween-decorations"
+  stars: 0
+
+- name: "corner-shape-playground"
+  display: "Corner Shape Lab"
+  description: "Visual playground for the CSS corner-shape property. Tune corner keywords, superellipse curves and stacked shadow rings, then copy the generated CSS."
+  language: "JavaScript"
+  year: 2026
+  category: "tools"
+  private: false
+  github_url: "https://github.com/vabs/corner-shape-playground"
+  stars: 0
+
 - name: "meeting-cost"
   display: "Meeting Cost Calculator"
   description: "Real-time calculator that shows how much a meeting costs as it runs, based on attendee salaries."
@@ -231,6 +301,66 @@
   stars: 0
 
 # Apps
+- name: "desihh"
+  display: "Hoppers"
+  description: "Discovery and booking platform for Indian hip-hop artists. Server-rendered artist directory, event listings, booking inquiries and an operator console."
+  language: "TypeScript"
+  year: 2026
+  category: "apps"
+  private: true
+  github_url: ""
+  stars: 0
+
+- name: "registry"
+  display: "Gift Registry"
+  description: "Gift registry app. Create registries and items, share a link, and let guests reserve gifts without signing up."
+  language: "TypeScript"
+  year: 2026
+  category: "apps"
+  private: true
+  github_url: ""
+  stars: 0
+
+- name: "mood-travel"
+  display: "Mood Travel"
+  description: "Pick a feeling and explore curated books, music, movies and podcasts along mood journeys mapped on Plutchik's wheel of emotion."
+  language: "TypeScript"
+  year: 2026
+  category: "apps"
+  private: false
+  github_url: "https://github.com/vabs/mood-travel"
+  stars: 0
+
+- name: "time-locked"
+  display: "Time Locked"
+  description: "Decision journal that locks a decision behind a timer. Capture notes while you wait, get notified when it unlocks, then record the outcome. Installable PWA."
+  language: "TypeScript"
+  year: 2026
+  category: "apps"
+  private: false
+  github_url: "https://github.com/vabs/time-locked"
+  stars: 0
+
+- name: "thing-tracker"
+  display: "Thing Tracker"
+  description: "Track what you've asked other people to do: who owes you what, when you asked, and when it's due, laid out on a color-coded timeline."
+  language: "JavaScript"
+  year: 2026
+  category: "apps"
+  private: false
+  github_url: "https://github.com/vabs/thing-tracker"
+  stars: 0
+
+- name: "birthday-pi"
+  display: "Birthday-Pi"
+  description: "Find where your birthday hides in the first 100,000 digits of pi, see how often it repeats, and get your Pi Sign with an oracle reading."
+  language: "CSS"
+  year: 2026
+  category: "apps"
+  private: false
+  github_url: "https://github.com/vabs/birthday-pi"
+  stars: 0
+
 - name: "caricature"
   display: "Caricature"
   description: "A browser-based creative drawing and caricature tool."
