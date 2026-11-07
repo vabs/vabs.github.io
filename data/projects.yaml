@@ -7,6 +7,7 @@
   category: "games"
   private: false
   github_url: "https://github.com/vabs/drill-game"
+  play_url: "https://vabs.github.io/drill-game/"
   stars: 0
 
 - name: "fishy"
@@ -17,6 +18,7 @@
   category: "games"
   private: false
   github_url: "https://github.com/vabs/fishy"
+  play_url: "https://fishy.vaibhavsomani.com/"
   stars: 0
 
 - name: "square-packing-game"
@@ -27,6 +29,7 @@
   category: "games"
   private: false
   github_url: "https://github.com/vabs/square-packing-game"
+  play_url: "https://vabs.github.io/square-packing-game/"
   stars: 0
 
 - name: "tower-game-v1"
@@ -37,6 +40,7 @@
   category: "games"
   private: false
   github_url: "https://github.com/vabs/tower-game-v1"
+  play_url: "https://vabs.github.io/tower-game-v1/"
   stars: 0
 
 - name: "pumpkin-hunt"
@@ -87,6 +91,7 @@
   category: "games"
   private: false
   github_url: "https://github.com/vabs/conwaysoldiers"
+  play_url: "https://vabs.github.io/conwaysoldiers/"
   stars: 0
 
 - name: "fortune-cookie"
@@ -97,6 +102,7 @@
   category: "games"
   private: false
   github_url: "https://github.com/vabs/fortune-cookie"
+  play_url: "https://vabs.github.io/fortune-cookie/"
   stars: 0
 
 - name: "tic-tac-toe"
@@ -107,6 +113,7 @@
   category: "games"
   private: false
   github_url: "https://github.com/vabs/tic-tac-toe"
+  play_url: "https://vabs.github.io/tic-tac-toe/"
   stars: 0
 
 - name: "match-cards"
@@ -117,6 +124,7 @@
   category: "games"
   private: false
   github_url: "https://github.com/vabs/match-cards"
+  play_url: "https://vabs.github.io/match-cards/"
   stars: 0
 
 - name: "tower-of-hanoi"
@@ -127,6 +135,7 @@
   category: "games"
   private: false
   github_url: "https://github.com/vabs/tower-of-hanoi"
+  play_url: "https://vabs.github.io/tower-of-hanoi/"
   stars: 0
 
 - name: "pumpkin"
@@ -137,6 +146,7 @@
   category: "games"
   private: false
   github_url: "https://github.com/vabs/pumpkin"
+  play_url: "https://vabs.github.io/pumpkin/"
   stars: 0
 
 # Tools

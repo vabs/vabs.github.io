@@ -46,6 +46,9 @@
           {{ if .private }}
           <a class="btn btn-access" href="mailto:njoy.today@gmail.com?subject=Access Request: {{ .name }}&body=Hi Vaibhav,%0D%0A%0D%0AI'd like to request access to the {{ .display }} repository.%0D%0A%0D%0AThanks">Request Access</a>
           {{ else }}
+          {{ with .play_url }}
+          <a class="btn btn-play" href="{{ . }}" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">&#9654;</span> Play</a>
+          {{ end }}
           <a class="btn btn-github" href="{{ .github_url }}" target="_blank" rel="noopener noreferrer">View on GitHub</a>
           {{ end }}
         </div>
