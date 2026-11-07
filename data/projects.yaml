@@ -1,4 +1,14 @@
 # Games
+- name: "drill-game"
+  display: "Rift Drill"
+  description: "Arcade roguelite in a single HTML file. Steer a swarm of drills down through a collapsing rift to reach the Abyss at 2,400 m, then spend banked ore on a permanent research tree."
+  language: "HTML"
+  year: 2026
+  category: "games"
+  private: false
+  github_url: "https://github.com/vabs/drill-game"
+  stars: 0
+
 - name: "fishy"
   display: "Fishy"
   description: "Round-based fish catching game. Steer a net around a boat, bank your catch before the clock runs out, and spend earnings on a tech tree of upgrades and stranger fish."
@@ -130,6 +140,16 @@
   stars: 0
 
 # Tools
+- name: "skills"
+  display: "Agent Skills"
+  description: "Reusable agent skills for engineering work: adversarial system validation, behavior-preserving refactors, codebase debt audits, safe rollouts and migrations, and decisions under uncertainty."
+  language: "Python"
+  year: 2026
+  category: "tools"
+  private: true
+  github_url: ""
+  stars: 0
+
 - name: "youtube-channel-name-converter"
   display: "YouTube Channel ID Converter"
   description: "Convert a YouTube channel name to its channel ID instantly. No API key required."
@@ -301,6 +321,16 @@
   stars: 0
 
 # Apps
+- name: "reporting"
+  display: "Bracket"
+  description: "Pricing and quotes for photographers. Turns a studio's rate tables into itemized quotes that clients review and accept through a private link. React, Express 5, Prisma and SQLite."
+  language: "JavaScript"
+  year: 2026
+  category: "apps"
+  private: true
+  github_url: ""
+  stars: 0
+
 - name: "desihh"
   display: "Hoppers"
   description: "Discovery and booking platform for Indian hip-hop artists. Server-rendered artist directory, event listings, booking inquiries and an operator console."
