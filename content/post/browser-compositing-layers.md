@@ -36,7 +36,7 @@ Common promotion reasons include:
 
 - 3D or animated transforms.
 - Opacity animations.
-- Video, canvas, and plugins.
+- Video, accelerated canvas, and (historically) plugins.
 - Fixed or sticky elements in certain contexts.
 - CSS filters or backdrop filters.
 - `will-change`.

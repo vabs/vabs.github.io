@@ -30,8 +30,8 @@ Spans form a parent-child hierarchy via `parent_span_id`. The first span in a tr
   "start_time": "2026-04-28T15:42:11.001Z",
   "duration_ms": 412,
   "attributes": {
-    "http.method": "GET",
-    "http.status_code": 200,
+    "http.request.method": "GET",
+    "http.response.status_code": 200,
     "service.name": "api-gateway"
   },
   "status": "OK"
@@ -78,7 +78,7 @@ def handle_request(incoming_headers):
         outbound = {}
         inject(outbound, span.context())     # write traceparent
         resp = http.post("https://stripe/authorize", headers=outbound)
-        span.set_attribute("http.status_code", resp.status)
+        span.set_attribute("http.response.status_code", resp.status)
 ```
 
 The same extract/inject dance applies to non-HTTP transports. For Kafka or RabbitMQ, the context rides in message headers; for gRPC, in metadata. The propagation is **out-of-band** from your business payload — your application data never carries trace IDs, the transport layer does.

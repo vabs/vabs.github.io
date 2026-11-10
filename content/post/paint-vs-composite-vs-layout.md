@@ -116,3 +116,5 @@ Start with the user-visible symptom: input delay, animation stutter, scroll jank
 - Verify in performance tools on realistic hardware.
 
 Rendering performance is stage-specific. Once you can name the stage, fixes become concrete instead of superstitious.
+
+**Related:** [GPU acceleration in CSS]({{< relref "gpu-acceleration-in-css.md" >}}), [Subpixel rendering]({{< relref "subpixel-rendering.md" >}})

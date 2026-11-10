@@ -140,3 +140,5 @@ Reach for the **actor model** when you're building systems that must scale acros
 ## Conclusion
 
 Shared-memory concurrency and the actor model represent two answers to the same question: how do independent activities coordinate without corrupting each other? Shared memory says "share carefully, with locks," offering maximum performance at the cost of global, fragile reasoning. The actor model says "don't share at all, send messages instead," offering local reasoning, location transparency, and fault tolerance at the cost of message-passing overhead. Knowing which question your system is really asking, raw in-process speed versus distributed resilience, tells you which model to reach for, and the most robust systems are usually the ones that know when to use each.
+
+**Related:** [Message-Driven Architecture with Akka and Orleans]({{< relref "message-driven-architecture-akka-orleans.md" >}})

@@ -65,7 +65,7 @@ For SPAs, remember that CSP is attached to the document response. Client-side ro
 
 ## Failure modes
 
-Host allowlists are often overtrusted. If `script-src` allows a JSONP endpoint, user-upload CDN, or compromised third party, an attacker can still execute script. `unsafe-inline` largely disables the most important script protection unless paired with hashes in specific legacy cases.
+Host allowlists are often overtrusted. If `script-src` allows a JSONP endpoint, user-upload CDN, or compromised third party, an attacker can still execute script. `unsafe-inline` largely disables the most important script protection. When a nonce or hash is also present, CSP Level 2+ browsers ignore `unsafe-inline`, so it only survives as a fallback for legacy browsers.
 
 Another failure is ignoring reports. CSP reports can be noisy because extensions inject scripts. Group by user agent, blocked URI, directive, and source file before changing policy. Do not add broad domains just to silence noise.
 

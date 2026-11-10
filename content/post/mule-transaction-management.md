@@ -8,11 +8,11 @@ tags: ["mulesoft", "api", "transactional-context", "activemq"]
 ### Definition
 > Defines a context to execute all the steps in a mule flow. The scope enables none or all functionality. If any error occurs in any of the step, the whole flow is reverted.
 
-Transactions management in mule has always been a topic of interest for many. It gives the flexibility of using a pre-defined rollback strategy if doing multiple database operations. Though the `Transactional` scope is only available with transactional connectors such as the `Database Connector`, `JMS connector` or `VM connector`. 
+Transaction management in mule has always been a topic of interest for many. It gives the flexibility of using a pre-defined rollback strategy if doing multiple database operations. Though the `Transactional` scope is only available with transactional connectors such as the `Database Connector`, `JMS connector` or `VM connector`. 
 
 The usual requirement in an integration platform is calling multiple systems, mostly over HTTP. Though mule doesn't provide a rollback strategy over HTTP connectors. Also there is no replay-back feature which can be used if an exception occurs. 
 
-In this blog post I am going to discuss one of the strategy to overcome these problems. Also how this strategy provides a persistent way to store data in case of failures and execute them at a later times.
+In this blog post I am going to discuss one of the strategies to overcome these problems. Also how this strategy provides a persistent way to store data in case of failures and execute them at a later time.
 
 Let's take a real world scenario.
 A user lands on your website and creates a profile. There are 3 operations which are to be done.
@@ -21,15 +21,15 @@ A user lands on your website and creates a profile. There are 3 operations which
     2. Create the user in salesforce
     3. Send a confirmation email
 
-Assume that email system in place is an un-reliable system as it is up only 60% of the time. When all the 3 steps are completed then only the flow is deemed to be successful else it is a failure.
+Assume that email system in place is an unreliable system as it is up only 60% of the time. When all the 3 steps are completed then only the flow is deemed to be successful else it is a failure.
 
 Let's first create a traditional mule flow.
 
 ![Mule Flow](/images/post/basic-mule-flow.png)
 
-As can be seen here, if `Step 1` is successful but `Step 2` is a failure. The error is caught though to rollback there should custom exception handling code required to be developed. Also maybe `Step 2` only failed because of a network connection. Since the message is already consumed by the exception strategy there is no way it can be resent.
+As can be seen here, if `Step 1` is successful but `Step 2` is a failure. The error is caught, though to roll back, custom exception handling code would need to be developed. Also maybe `Step 2` only failed because of a network connection. Since the message is already consumed by the exception strategy there is no way it can be resent.
 
-Now, let's try to solve this problem with a bit smarter approach. For this implementation a queuing system will be used. For the sake of brevity the assumption made here is the use of [ActiveMQ](http://activemq.apache.org/). As the steps are already known let's create a `cookbook`. In this `cookbook`, the steps and the payload is passed as a json message and consumed at each step. 
+Now, let's try to solve this problem with a bit smarter approach. For this implementation a queuing system will be used. For the sake of brevity the assumption made here is the use of [ActiveMQ](http://activemq.apache.org/). As the steps are already known let's create a `cookbook`. In this `cookbook`, the steps and the payload are passed as a json message and consumed at each step. 
 
 ```json
 {
@@ -47,7 +47,7 @@ Now, let's try to solve this problem with a bit smarter approach. For this imple
 }
 ```
 
-As activeMQ provides functionality of creating queues on the fly based on name, the `nextStep` parameter value will help in creating them. There will be an associated failure queue with each `nextStep` queue. For eg: if a queue will be created called `create-user-in-database`; corresponding failure queue will be created with the name `create-user-in-database-fail`.
+As activeMQ provides functionality of creating queues on the fly based on name, the `nextStep` parameter value will help in creating them. There will be an associated failure queue with each `nextStep` queue. For eg: if a queue called `create-user-in-database` is created, a corresponding failure queue will be created with the name `create-user-in-database-fail`.
 
 ### Success Scenario Message Flow
 <details><summary>Step 1</summary>
@@ -142,7 +142,7 @@ The following steps talk about the implementation
 1. There is no complete rollback. There is manual intervention required if a step is having constant failures on consuming a certain message.
 2. The system's reliability depends on the queuing server, if the server is down the whole flow crashes.
 
-Hope this helps in giving an idea on how can transaction management be implemented in mule. Let me know in comments for any possible questions or feedback.
+Hope this helps in giving an idea of how transaction management can be implemented in mule. Let me know in comments for any possible questions or feedback.
 
 ### References
 

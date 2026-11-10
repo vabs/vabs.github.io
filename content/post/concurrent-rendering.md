@@ -86,3 +86,5 @@ Use controlled promises to simulate out-of-order completion. Start request A, st
 - Use safe external-store subscriptions.
 - Test with throttled CPU and delayed network.
 - Treat Strict Mode warnings as concurrency preparation, not noise.
+
+**Related:** [Time slicing]({{< relref "time-slicing.md" >}}), [Priority inversion in async code]({{< relref "priority-inversion-in-async-code.md" >}})

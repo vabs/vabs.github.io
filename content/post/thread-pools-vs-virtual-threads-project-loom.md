@@ -81,7 +81,7 @@ The guiding principle inverts old advice: **do not pool virtual threads.** Creat
 
 Virtual threads are not a free lunch in every case. A virtual thread can become **pinned** to its carrier, meaning it can't unmount even when it blocks. This defeats the whole purpose and can starve the carrier pool. Pinning historically happened in two situations:
 
-1. **Inside a `synchronized` block.** If a virtual thread blocks while holding a monitor via `synchronized`, older JVMs pinned it. The recommended fix was to replace `synchronized` with `ReentrantLock`, which Loom understands. (Recent JVM versions have largely eliminated synchronized-induced pinning, but legacy libraries may still trigger it.)
+1. **Inside a `synchronized` block.** If a virtual thread blocks while holding a monitor via `synchronized`, older JVMs pinned it. The recommended fix was to replace `synchronized` with `ReentrantLock`, which Loom understands. (JDK 24, via JEP 491, eliminated synchronized-induced pinning, so this mainly matters on JDK 21–23.)
 2. **Inside a native method (JNI).** Blocking inside native code pins, because the JVM can't park a native stack frame to the heap.
 
 You can diagnose pinning by running with diagnostics enabled and watching for events that report pinned virtual threads (this flag works on JDK 21–23; JDK 24 removed it in favor of the JFR `jdk.VirtualThreadPinned` event):
@@ -125,7 +125,7 @@ The semaphore limits concurrency at the resource (the database) rather than at t
 
 ## Structured Concurrency
 
-Loom ships alongside structured concurrency (still a preview API, enabled with `--enable-preview`), which treats a group of concurrent subtasks as a single unit of work with a defined lifetime. It ensures that if you fan out to several services, they all complete or all get cancelled together, and errors propagate cleanly:
+Loom ships alongside structured concurrency (still a preview API through JDK 27, enabled with `--enable-preview`, and finalized in JDK 28 via JEP 543; the `StructuredTaskScope.open()` form below is the shape used since JDK 25, though JDK 27 changed the standard joiners to throw `ExecutionException`), which treats a group of concurrent subtasks as a single unit of work with a defined lifetime. It ensures that if you fan out to several services, they all complete or all get cancelled together, and errors propagate cleanly:
 
 ```java
 try (var scope = StructuredTaskScope.open()) {
@@ -143,7 +143,7 @@ If either fork fails, the scope cancels the other automatically. This brings the
 Adopting virtual threads in an existing service is usually low-risk because the API surface is small. The typical steps:
 
 1. Swap your request-handling executor to `Executors.newVirtualThreadPerTaskExecutor()`. Most web frameworks now offer a config flag to do this.
-2. Audit hot paths for `synchronized` blocks that wrap blocking I/O and replace them with `ReentrantLock`.
+2. On JDK 21–23, audit hot paths for `synchronized` blocks that wrap blocking I/O and replace them with `ReentrantLock` (JDK 24+ no longer pins here).
 3. Add semaphores or connection pools to cap concurrency against databases and downstream services that can't handle unbounded load.
 4. Keep CPU-bound work on a separate, fixed platform-thread pool.
 

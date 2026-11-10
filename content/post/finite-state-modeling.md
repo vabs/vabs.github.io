@@ -37,7 +37,9 @@ type Event =
   | { type: "CHANGE"; field: string; value: string }
   | { type: "SUBMIT" }
   | { type: "RESOLVE"; requestId: string; receiptId: string }
-  | { type: "REJECT"; requestId: string; error: string };
+  | { type: "REJECT"; requestId: string; error: string }
+  | { type: "RETRY" }
+  | { type: "EDIT_AGAIN" };
 ```
 
 Notice that `submitted` does not contain editable fields unless the UX needs them. That forces code to handle the mode rather than accidentally rendering stale input.

@@ -102,7 +102,7 @@ You can put a number on staleness. If invalidation propagation has a 99th-percen
 window_p99 ≈ Lp + Lr
 ```
 
-For a TTL-only cache it is simply the TTL. The useful insight is that these compose: a TTL-only cache *with* replication still bounds staleness at the TTL, because the TTL forces a refetch regardless of replication state. That is why a modest TTL is such a cheap safety net — it caps the worst case even when your invalidation pipeline misbehaves.
+For a TTL-only cache it is simply the TTL. The useful insight is that these compose: a TTL-only cache *with* replication still bounds staleness at roughly the TTL, because the TTL forces a refetch regardless of replication state (plus any lag on the replica the refetch reads from). That is why a modest TTL is such a cheap safety net — it caps the worst case even when your invalidation pipeline misbehaves.
 
 ## Convergence and the role of versioning
 

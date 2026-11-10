@@ -129,7 +129,10 @@ checkpoint N barrier arrives at sink
   -> phase 1: sink "pre-commits" (writes to a staging area / opens a txn)
   -> checkpoint coordinator confirms all operators snapshotted
   -> phase 2: sink "commits" (makes staged data visible)
-  -> on failure before commit: restore from checkpoint N-1, replay, re-stage
+  -> on failure before checkpoint N completes: restore from checkpoint N-1,
+     abort the staged txn, replay, re-stage
+  -> on failure after checkpoint N completes but before phase 2: restore
+     from checkpoint N and re-commit the pre-committed txn
 ```
 
 Source offsets are part of the checkpointed state, so restoring a checkpoint atomically rewinds both the read position and the operator state to a consistent point — exactly the atomic offset+state property from Pillar 2, generalized across a distributed graph.
@@ -169,3 +172,5 @@ For metrics, logs, and analytics where a duplicate or a rare loss is immaterial,
 ## Conclusion
 
 Exactly-once is not a delivery guarantee — it is a *processing outcome* engineered on top of at-least-once delivery. The recipe is always the same two pillars: make operations idempotent (so duplicates are harmless) and make state-plus-offset commits atomic (so a crash never strands you between "did the work" and "recorded the work"). Kafka realizes this with idempotent producers, cross-topic transactions, and read-committed consumers; Flink with checkpoint barriers and two-phase-commit sinks; a humble service with a dedup table and one local transaction. When you next see "exactly-once" on a feature list, read it as "we have done the idempotence and atomicity work for you," and then check the one place it usually leaks: the sink.
+
+**Related:** [Kafka Partition Rebalancing & Exactly-Once Semantics]({{< relref "kafka-partition-rebalancing-and-exactly-once-semantics.md" >}})

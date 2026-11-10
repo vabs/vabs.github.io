@@ -7,9 +7,9 @@ tags: [api, api-design, design-guidelines, micro-services]
 
 # ``` All good things must come to an api endpoint ```
 
-Most of the real world application these days work by calling some sort of API to display or process data. API led connectivity has increased the pace of development. It is very similar to putting lego blocks together to build something useful.
+Most of the real world applications these days work by calling some sort of API to display or process data. API led connectivity has increased the pace of development. It is very similar to putting lego blocks together to build something useful.
 
-With the evolution of API, there are 2 major principles which drives the success
+With the evolution of API, there are 2 major principles which drive the success
 
 1. **Platform Agnostic**: A client should be able to call the API, regardless of how the API is implemented internally. The complexity should be hidden and the contract between the API and the client should define the mechanism of data exchange.
 
@@ -43,13 +43,13 @@ The endpoint should have following features:
 * It should be friendly to developer and be explored via browser / rest client address bar
 * It should be simple, consistent and intuitive to make adoption easy
 * It should provide flexibility for getting the data as required
-* It should be concrete names because Cool URIs never change. 
+* It should use concrete names because Cool URIs never change. 
 
 
 
 ---
 >### **Authentication** {#authentication}
-The endpoint should be always authenticated to prevent from automated attacks. There are multiple ways of authenticating an endpoint. 
+The endpoint should be always authenticated to prevent automated attacks. There are multiple ways of authenticating an endpoint. 
 
 * Token Based Authorization:
     In token based authorization, a token should be given along with the call to the endpoint. The token can have the client signature and the expiry time. The service should first validate the token before doing the processing. If the token configuration is invalid, the service should return the error with response code as `401`.
@@ -64,8 +64,8 @@ The table below describes the expiry for cache.
 
 |Expiry	    | Description|
 |---        | ---        |
-|x mins     |If external or third-party services is used|
-|< x mins	|If the values fetched doesn't change frequently|
+|x mins     |If external or third-party services are used|
+|> x mins	|If the values fetched don't change frequently|
 (where x is defined as per requirement)
 
 
@@ -230,7 +230,7 @@ It's always advisable to version the APIs. This helps in maintaining code indepe
     Example: /test-service HEADER: **version: 1.0**
 
 * As query parameter:
-    API are also versioned by passing version number in the resource URL but as query parameter. <br />
+    APIs are also versioned by passing version number in the resource URL but as query parameter. <br />
     Example: /test-service?**version=1.0**
 
 

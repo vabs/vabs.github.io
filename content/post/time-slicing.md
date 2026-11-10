@@ -78,3 +78,5 @@ Instrument transition duration and cancellation. If a transition repeatedly star
 - Profile render and commit separately.
 - Test responsiveness under CPU throttling.
 - Remember that commit and synchronous handlers are not time-sliced.
+
+**Related:** [Concurrent rendering]({{< relref "concurrent-rendering.md" >}}), [Priority inversion in async code]({{< relref "priority-inversion-in-async-code.md" >}})

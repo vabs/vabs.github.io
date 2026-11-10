@@ -102,3 +102,5 @@ Text blur after animation often persists because the element ends at a fractiona
 - Use visual regression thresholds for antialiasing differences.
 
 Subpixel rendering is not a browser bug. It is the mechanism that lets fluid layouts, high-DPI screens, and shaped text work. The engineering task is to know where fractions matter and where the renderer should be allowed to handle them.
+
+**Related:** [GPU acceleration in CSS]({{< relref "gpu-acceleration-in-css.md" >}}), [Paint vs composite vs layout]({{< relref "paint-vs-composite-vs-layout.md" >}})

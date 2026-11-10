@@ -132,7 +132,7 @@ The event id flows from the outbox `id`, so it is stable across redeliveries. Co
 
 ## Ordering
 
-Many domains require events for a single aggregate to arrive in order: you cannot apply `OrderCancelled` before `OrderPlaced`. The outbox preserves per-aggregate order naturally because writes to one aggregate are serialized and the relay reads them ordered by `id`. (Sequence ids are assigned at insert, not at commit, so order across concurrent transactions is not guaranteed.)
+Many domains require events for a single aggregate to arrive in order: you cannot apply `OrderCancelled` before `OrderPlaced`. The outbox preserves per-aggregate order naturally because writes to one aggregate are serialized and the relay reads them ordered by `id`. (Sequence ids are assigned at insert, not at commit, so order across concurrent transactions is not guaranteed.) Scaling the relay with `SKIP LOCKED` weakens this too: two relay instances can claim different events for the same aggregate and publish them out of order. If ordering matters, shard relays by `aggregate_id` hash or skip rows whose aggregate already has an earlier unpublished event.
 
 To keep that ordering through the broker, route by `aggregate_id` so all events for one order land on the same partition. Within a partition Kafka preserves order; across partitions it does not. The trade-off is throughput: a hot aggregate funnels all its traffic to one partition. For most systems per-aggregate ordering with cross-aggregate parallelism is exactly the right granularity.
 

@@ -90,3 +90,5 @@ Checklist:
 - Cancel stale async work.
 - Move heavy parsing or computation to workers where practical.
 - Measure interactions, not just isolated function duration.
+
+**Related:** [Time slicing]({{< relref "time-slicing.md" >}}), [Concurrent rendering]({{< relref "concurrent-rendering.md" >}})

@@ -42,7 +42,7 @@ Use CSS custom properties for theme tokens:
 
 Use `::part()` when consumers need to target specific internal elements. Expose parts like `button`, `label`, or `panel`, not implementation names like `div3`. Parts are a public API. Rename them with the same care you would use for JavaScript methods.
 
-Use `:host()` for host states and `:host-context()` cautiously. Context selectors can couple a component back to page structure and weaken encapsulation.
+Use `:host()` for host states and `:host-context()` cautiously; it is only implemented in Chromium-based browsers, not Firefox or Safari. Context selectors can couple a component back to page structure and weaken encapsulation.
 
 Design the styling contract before the internal CSS grows. A component typically needs three layers:
 

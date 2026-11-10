@@ -74,7 +74,7 @@ Time lag is what you alert on because it maps to user experience: "reads may be 
 
 ## The replication slot trap
 
-PostgreSQL replication slots guarantee the primary retains WAL until the replica has consumed it. This prevents the replica from falling off a cliff if it disconnects briefly. But it has a dangerous edge: if a replica goes away and never comes back, its slot keeps the primary from recycling WAL **forever**. WAL piles up, the primary's disk fills, and the primary goes read-only or crashes. A dead replica can take down your primary.
+PostgreSQL replication slots guarantee the primary retains WAL until the replica has consumed it. This prevents the replica from falling off a cliff if it disconnects briefly. But it has a dangerous edge: if a replica goes away and never comes back, its slot keeps the primary from recycling WAL **forever**. WAL piles up, the primary's disk fills, and the primary PANICs and shuts down because it can no longer write WAL. A dead replica can take down your primary. Since PostgreSQL 13, `max_slot_wal_keep_size` can cap how much WAL a slot may retain (the slot is invalidated past that limit), but it defaults to `-1`, meaning unlimited.
 
 Monitor `pg_replication_slots` for slots that are inactive or retaining excessive WAL:
 

@@ -139,7 +139,7 @@ External poolers like PgBouncer multiply the connection-sharing further by sitti
 | transaction | one transaction | Highest efficiency; breaks session-scoped features |
 | statement | one statement | Most aggressive; multi-statement txns forbidden |
 
-Transaction mode gives the best connection reuse, but because a backend connection is handed to a different client after each transaction, anything that lives outside a transaction breaks: server-side prepared statements, `SET` (session-level), `LISTEN/NOTIFY`, session advisory locks, and `WITH HOLD` cursors. Application drivers that silently use server-side prepared statements (a common default) will misbehave under transaction-mode pooling unless you disable them or use protocol-level statement caching that the pooler understands.
+Transaction mode gives the best connection reuse, but because a backend connection is handed to a different client after each transaction, anything that lives outside a transaction breaks: server-side prepared statements, `SET` (session-level), `LISTEN/NOTIFY`, session advisory locks, and `WITH HOLD` cursors. Application drivers that silently use server-side prepared statements (a common default) will misbehave under transaction-mode pooling unless you disable them or use protocol-level statement caching that the pooler understands. PgBouncer 1.21+ provides exactly that via `max_prepared_statements`, which tracks protocol-level (not SQL `PREPARE`) prepared statements across backends in transaction mode.
 
 ## Pitfall 6: The double-pool problem
 
@@ -171,3 +171,5 @@ The whole point of the pooler is that 500 client connections collapse onto ~20 r
 ```
 
 Every one of these maps back to the same root issue. A pool is a cache of connections, and like any cache its danger is serving something stale: a dead socket, a leaked handle the pool thinks is free, or a connection still wearing the previous request's session state. Treat each borrowed connection as untrusted until validated and reset, size the pool to the database rather than to your traffic fantasies, and the pool goes back to being the invisible optimization it was meant to be.
+
+**Related:** [Database Connection Pool Exhaustion]({{< relref "database-connection-pool-exhaustion.md" >}})

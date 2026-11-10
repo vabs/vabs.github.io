@@ -61,7 +61,7 @@ function useLatest(value) {
 }
 ```
 
-Then the long-lived callback reads `latest.current`. Use this pattern sparingly. Refs bypass the render snapshot model, so they are best for imperative boundaries: DOM listeners, sockets, timers, and third-party APIs.
+Then the long-lived callback reads `latest.current`. For the common case of an effect that needs to read the latest props or state without re-subscribing, React 19.2 added a built-in for this: `useEffectEvent` wraps a function so it always sees current values but is not a dependency of the effect. Use this pattern sparingly. Refs bypass the render snapshot model, so they are best for imperative boundaries: DOM listeners, sockets, timers, and third-party APIs.
 
 Use functional state updates for state derived from previous state. Use reducers when updates depend on multiple fields that must change together. A reducer centralizes transition logic and avoids callbacks stitching together stale fragments.
 

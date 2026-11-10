@@ -61,7 +61,7 @@ For actions that are naturally additive, such as payment capture or sending emai
 
 ## Failure modes
 
-The classic failure is binding mutation to both `onClick` and form `onSubmit`. Pressing Enter and clicking the button can create two submissions. Put the mutation in the submit handler, make the button `type="submit"`, and guard by action id.
+The classic failure is binding mutation to both `onClick` and form `onSubmit`. A single click on the submit button, or pressing Enter (which triggers implicit submission through that button), fires both handlers and creates two submissions. Put the mutation in the submit handler, make the button `type="submit"`, and guard by action id.
 
 Another failure is treating retries as new intents. A "Try again" button should reuse the same idempotency key when retrying the same payload. If the user edits the payload, that is a new intent and should receive a new key.
 

@@ -114,7 +114,7 @@ const reader = response.body.getReader();
 
 // Aborting the controller errors the fetch; also cancel the reader so the
 // stream releases its resources promptly.
-controller.signal.addEventListener("abort", () => reader.cancel());
+controller.signal.addEventListener("abort", () => reader.cancel().catch(() => {}));
 
 try {
   while (true) {

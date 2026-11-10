@@ -16,6 +16,7 @@ A message is dead-lettered for one of these reasons:
 - It is **rejected** with `basic.reject` or `basic.nack` and `requeue=false`.
 - Its **TTL expires** while sitting in the queue.
 - The queue **exceeds its length limit** and the message is dropped from the head.
+- On a quorum queue, the message **exceeds its delivery limit** (`x-delivery-limit`) after too many redeliveries.
 
 You wire it up with queue arguments:
 
@@ -49,7 +50,7 @@ When a message is dead-lettered, RabbitMQ adds an `x-death` header recording the
 
 ## The poison-message retry trap
 
-The first thing most teams do is wrong: they `nack` with `requeue=true` on failure. This sends the message straight back to the head of the same queue, where the same consumer picks it up and fails again — instantly, in a tight loop. A single poison message can saturate a consumer and starve every other message behind it.
+The first thing most teams do is wrong: they `nack` with `requeue=true` on failure. This sends the message straight back to the head of the same queue, where the same consumer picks it up and fails again — instantly, in a tight loop. A single poison message can saturate a consumer and starve every other message behind it. (Quorum queues in RabbitMQ 4.0+ apply a default delivery limit of 20, so the loop eventually ends in dead-lettering or a drop, but only after 20 rapid failures; classic queues have no such limit.)
 
 ```python
 # ANTI-PATTERN: infinite hot loop on a poison message

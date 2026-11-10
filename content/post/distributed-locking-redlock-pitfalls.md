@@ -163,7 +163,7 @@ sequenceDiagram
   S-->>C1: REJECTED (33 < 34)
 {{< /mermaid >}}
 
-Even though Client 1 woke up thinking it held the lock, its stale token 33 is rejected. The storage layer becomes the final arbiter of mutual exclusion. Note that once you have fencing tokens enforced at the resource, the lock service itself only needs to provide monotonic tokens — and a single Redis instance with `INCR`, or any consensus system, suffices. Redlock's quorum stops being load-bearing.
+Even though Client 1 woke up thinking it held the lock, its stale token 33 is rejected. The storage layer becomes the final arbiter of mutual exclusion. Note that once you have fencing tokens enforced at the resource, the lock service itself only needs to provide monotonic tokens — and a single Redis instance with `INCR` (as long as the counter is durable and can never go backwards after a restart or failover), or any consensus system, suffices. Redlock's quorum stops being load-bearing.
 
 ## Practical guidance
 

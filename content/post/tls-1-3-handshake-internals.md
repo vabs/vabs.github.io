@@ -117,7 +117,10 @@ The practical rule: only put **idempotent, non-state-changing** requests in 0-RT
 A few internals translate directly into operational choices:
 
 ```text
-- Prefer X25519 in supported_groups for fast, side-channel-resistant DH.
+- Prefer X25519 in supported_groups for fast, side-channel-resistant DH,
+  and offer the hybrid post-quantum X25519MLKEM768 group, which major
+  browsers and OpenSSL 3.5+ now send by default (its larger key_share
+  can push ClientHello past one packet, which trips some middleboxes).
 - Keep session ticket lifetimes short; long-lived tickets widen the 0-RTT
   replay window and weaken forward secrecy of resumption.
 - Rotate the ticket-encryption key (STEK) regularly across your fleet,

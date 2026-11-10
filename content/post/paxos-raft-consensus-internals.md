@@ -90,7 +90,7 @@ The leader appends each client command to its log and sends `AppendEntries` to f
 
 ```
 Leader log:    [1:x] [1:y] [2:z] [3:w]
-Follower log:  [1:x] [1:y] [2:q]          <- diverged at index 3
+Follower log:  [1:x] [1:y] [1:q]          <- diverged at index 3
 ```
 
 When AppendEntries fails the consistency check, the leader decrements the index it sends and retries, walking backward until it finds the last point of agreement, then overwrites the follower's conflicting suffix. The leader never overwrites its *own* log — only followers' logs are forced to match the leader.
@@ -139,7 +139,7 @@ They offer the same fault tolerance (`f` failures out of `2f+1`) and the same sa
 
 ## Practical realities
 
-Both protocols share operational truths worth internalizing. Writes need a round trip to a majority, so consensus latency is bounded by your slowest *median* replica, not your fastest — placing replicas across distant regions makes every commit pay the inter-region RTT. A cluster of `2f+1` only stays available while a majority is up; lose the majority and the system correctly refuses writes rather than risk split-brain. And membership changes are dangerous if done naively — adding or removing nodes can momentarily create two disjoint majorities — which is why Raft specifies joint consensus to transition through a combined old-and-new configuration safely.
+Both protocols share operational truths worth internalizing. Writes need a round trip to a majority, so consensus latency is bounded by your *median* replica (the slowest member of the fastest majority), not your fastest — placing replicas across distant regions makes every commit pay the inter-region RTT. A cluster of `2f+1` only stays available while a majority is up; lose the majority and the system correctly refuses writes rather than risk split-brain. And membership changes are dangerous if done naively — adding or removing nodes can momentarily create two disjoint majorities — which is why Raft specifies joint consensus to transition through a combined old-and-new configuration safely.
 
 ## Conclusion
 

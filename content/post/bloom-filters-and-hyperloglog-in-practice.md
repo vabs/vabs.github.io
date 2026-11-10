@@ -119,7 +119,7 @@ The **cuckoo filter** is a modern alternative that supports deletion, often uses
 
 ## HyperLogLog: counting distinct elements
 
-The second question, "how many *distinct* items have I seen," is cardinality estimation. Exactly counting distinct items in a 10-billion-row stream means tracking every distinct value, which needs memory proportional to the cardinality. HyperLogLog (HLL) estimates it using a fixed, tiny amount of memory, typically a few kilobytes, with a standard error around 2% for the common configuration. That's astonishing: a few KB to count billions of distinct items.
+The second question, "how many *distinct* items have I seen," is cardinality estimation. Exactly counting distinct items in a 10-billion-row stream means tracking every distinct value, which needs memory proportional to the cardinality. HyperLogLog (HLL) estimates it using a fixed, tiny amount of memory, typically a few kilobytes, with a standard error of about 1% for the common configuration. That's astonishing: a few KB to count billions of distinct items.
 
 ### The core intuition
 
@@ -189,7 +189,7 @@ def merge(a, b):
 
 HLL estimates cardinality, not membership. It cannot tell you *whether* a specific element was seen, only roughly how many distinct elements there were. Don't confuse it with a Bloom filter.
 
-Its accuracy degrades at very low cardinalities, which is why production implementations (like Redis's) use a sparse linear-counting representation for small sets and switch to dense HLL only once the count grows. And the error is statistical: any single estimate could be off by more than the standard error. For billing or anything requiring exactness, HLL is the wrong tool.
+Its accuracy degrades at very low cardinalities, which is why production implementations (like Redis's) use a compact sparse representation for small sets (with small-range corrections such as linear counting in the estimator) and switch to dense HLL only once the count grows. And the error is statistical: any single estimate could be off by more than the standard error. For billing or anything requiring exactness, HLL is the wrong tool.
 
 ## Choosing between them
 

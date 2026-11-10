@@ -43,6 +43,7 @@ Pact is consumer-driven and polyglot (JVM, JS, Go, Python, .NET share one wire f
 The consumer writes a test against a **Pact mock server**. It declares the expected interaction — request and response — and runs its real client code against the mock. If the client behaves as declared, Pact emits a **pact file** (JSON) describing the interaction.
 
 ```javascript
+const { like, regex } = MatchersV3;
 const provider = new PactV3({ consumer: 'web-bff', provider: 'orders-api' });
 
 provider
@@ -54,7 +55,7 @@ provider
     headers: { 'Content-Type': 'application/json' },
     body: {
       id: like(42),                      // matcher: any integer
-      status: term({ matcher: 'PAID|PENDING', generate: 'PAID' }),
+      status: regex('PAID|PENDING', 'PAID'),   // matcher: regex + example
       total: like(99.5)
     }
   });
@@ -65,7 +66,7 @@ await provider.executeTest(async (mock) => {
 });
 ```
 
-Notice the **matchers** — `like`, `term`, `eachLike`. The contract does not pin exact values (`42`); it pins *shape and type*. This is essential: the provider must be free to return a different order ID without breaking the contract. Contract tests verify structure, not specific data.
+Notice the **matchers** — `like`, `regex`, `eachLike` (the V2 API called the regex matcher `term`). The contract does not pin exact values (`42`); it pins *shape and type*. This is essential: the provider must be free to return a different order ID without breaking the contract. Contract tests verify structure, not specific data.
 
 ### Phase 2: Provider Side
 
@@ -93,7 +94,7 @@ The `@State` hook is the bridge: each interaction declares a `given(...)` provid
 
 ## Spring Cloud Contract: How It Works
 
-Spring Cloud Contract (SCC) defaults to a **provider-driven** model and is JVM-centric. The provider authors contracts in a Groovy or YAML DSL. From those, SCC does two things:
+Spring Cloud Contract (SCC) defaults to a **provider-driven** model and is JVM-centric. The provider authors contracts in a Groovy or YAML DSL. (SCC also supports a consumer-driven workflow, where consumers contribute contracts to the provider's repository, but contracts still live with the provider.) From those, SCC does two things:
 
 1. **Generates provider verification tests** automatically, which run against the real provider (using MockMvc, WebTestClient, or an explicit base).
 2. **Produces a stub** (a WireMock JSON mapping) published as a Maven artifact, which consumers download and run their tests against.
@@ -153,7 +154,7 @@ The deciding factors in practice: if your fleet is polyglot and you want consume
 
 A contract testing setup is only as good as its deployment gate. The dangerous scenario: the provider verified an *old* contract, then changed, and a consumer relies on the new behavior — or vice versa. You must answer "is the version I am about to deploy compatible with what is *already deployed* on the other side?"
 
-Pact's broker answers this with **`can-i-deploy`**. The broker tracks which versions of each consumer and provider have been verified against each other, tagged by environment.
+Pact's broker answers this with **`can-i-deploy`**. The broker tracks which versions of each consumer and provider have been verified against each other, and which versions are currently deployed to each environment.
 
 ```bash
 pact-broker can-i-deploy \
@@ -181,7 +182,7 @@ This is what makes contract testing safe for **independent deployment**. Without
 - **Over-specifying breaks flexibility.** Pinning exact values instead of matchers turns the provider's data into part of the contract, causing false failures. Match types and patterns, not literals.
 - **Provider states must be honest.** If the `given` state setup diverges from production reality, you verify against fiction. Keep state setup minimal and faithful.
 - **You still need a few E2E tests.** Contract testing covers pairwise integration superbly but does not catch issues spanning three-plus services, infrastructure config, or auth wiring. Keep a thin smoke-test layer.
-- **Versioning the broker correctly.** Tag verifications by environment and use the git SHA as the version, or `can-i-deploy` gives you misleading answers.
+- **Versioning the broker correctly.** Use the git SHA as the version and record every deployment per environment (`pact-broker record-deployment`, which supersedes the older environment tags), or `can-i-deploy` gives you misleading answers.
 
 ## Closing Thought
 

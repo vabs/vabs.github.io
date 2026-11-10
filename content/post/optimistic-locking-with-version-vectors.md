@@ -10,7 +10,7 @@ Two users open the same record, both edit it, both save. Whose change wins? In a
 
 ## Optimistic versus pessimistic
 
-Pessimistic locking takes a lock before reading, so no one else can touch the data until you release it. It guarantees no conflicts but serializes access, holds locks across user think-time, and deadlocks. Optimistic locking takes no lock. It lets everyone read and edit freely, and only at write time checks whether the data changed since you read it. If it did, your write is rejected and you reconcile.
+Pessimistic locking takes a lock before reading, so no one else can touch the data until you release it. It guarantees no conflicts but serializes access, holds locks across user think-time, and risks deadlocks. Optimistic locking takes no lock. It lets everyone read and edit freely, and only at write time checks whether the data changed since you read it. If it did, your write is rejected and you reconcile.
 
 Optimistic locking wins whenever conflicts are rare relative to reads — which is most of the time in user-facing systems. The cost is that you must handle the occasional rejected write, instead of the occasional held lock.
 

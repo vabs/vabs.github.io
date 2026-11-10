@@ -33,8 +33,8 @@ graph TD
 
 ```text
 Coordinator log:                Participant log:
-  PREPARE sent          ->        prepared (locks held)
-  all YES received      ->        voted YES
+  PREPARE sent          ->        prepared (locks held), voted YES
+  all YES received
   COMMIT decision (durable)
   COMMIT sent           ->        committed, locks released
 ```

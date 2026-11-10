@@ -8,7 +8,7 @@ tags: ["java", "dropwizard", "dropwizard-jobs", "loading-cache", "parameter stor
 
 # Dropwizard with LoadingCache and Scheduler
 
-For past few weeks I was working on an API implementation using dropwizard 2.x. There were following requirements given for the implementation
+For the past few weeks I was working on an API implementation using dropwizard 2.x. The following requirements were given for the implementation
 
 1. The API implementation should create a cache by querying db at the startup
 2. The cache should be invalidated on request and repopulated
@@ -41,7 +41,7 @@ Now, let's have a look at each step in detail with some code.
 
 ### Expose invalidating cache functionality to API endpoint
 
-This was the easiest step as LoadingCache module come with all the methods which were required for this to be exposed.
+This was the easiest step as the LoadingCache module comes with all the methods which were required for this to be exposed.
 I created 3 endpoints and exposed them for following functionalities. These functionalities can be extended as per cache object.
 
 
@@ -77,7 +77,7 @@ The user can send a post request to `/aws/parameter/<key>` endpoint which will c
 
 ### Writing CRON task
 
-This cron task has a little caveat in the implementation. Since `dropwizard-jobs` runs in a different thread in dropwizard the access to the context objects are not straightforward.
+This cron task has a little caveat in the implementation. Since `dropwizard-jobs` runs in a different thread in dropwizard access to the context objects is not straightforward.
 Hence to solve this problem, this cron job calls the localhost process of dropwizard to clear the cache. 
 
 Code: Job running every minute
@@ -93,7 +93,7 @@ Code: Job running every minute
           + "' as the default value.");
       } else {
         if (!currentValue.equals(lastValue)) {
-          // Initial the invalidation of the cache
+          // Initiate the invalidation of the cache
           logger.info(
             "[ForceInvalidationCache Scheduler]: Parameter Store has changed: '" + lastValue
               + "' != '" + currentValue + "'");
@@ -133,9 +133,9 @@ protected boolean invalidateCache() {
 
 
 Here the variable `firstRun` checks if the scheduler is running for the first time and stores the current AWS Parameter Store value in `lastValue`.
-For the subsequent runs, the AWS Parameter value is checked against the local value and if they don't match the cache is cleared and refilled. If both the values are same, no action is taken.
+For the subsequent runs, the AWS Parameter value is checked against the local value and if they don't match the cache is cleared and refilled. If both the values are the same, no action is taken.
 
-For my requirement CRON was supposed to run at every 10 minutes interval but it's easy to configure as per the requirement. Checkout [dropwizard-jobs docs](https://github.com/dropwizard-jobs/dropwizard-jobs) for more details
+For my requirement CRON was supposed to run at every 10 minutes interval but it's easy to configure as per the requirement. Check out [dropwizard-jobs docs](https://github.com/dropwizard-jobs/dropwizard-jobs) for more details
 
 
 #### References

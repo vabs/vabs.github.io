@@ -66,7 +66,7 @@ async function processItems(items) {
 }
 ```
 
-Treat that snippet as a shape, not a universal utility. `requestIdleCallback` can starve under constant activity, `requestAnimationFrame` runs before paint, and `scheduler.postTask` support varies. Pick the primitive based on whether the work is visual, background, or latency-sensitive.
+Treat that snippet as a shape, not a universal utility. `requestIdleCallback` can starve under constant activity, `requestAnimationFrame` runs before paint, and `scheduler.yield` / `scheduler.postTask` support varies. Pick the primitive based on whether the work is visual, background, or latency-sensitive.
 
 ## Failure modes
 

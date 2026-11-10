@@ -46,7 +46,7 @@ stateDiagram-v2
 
 The transition rules deserve care:
 
-- **Closed to open** triggers on a *rate* or *count* of failures, not a single error. A common policy: trip if the failure ratio exceeds 50% over a rolling window of at least N requests. Requiring a minimum request volume prevents one error during a quiet period from tripping the breaker.
+- **Closed to open** triggers on a *rate* or *count* of failures, not a single error. A common policy: trip once the failure ratio reaches 50% over a rolling window of at least N requests. Requiring a minimum request volume prevents one error during a quiet period from tripping the breaker.
 - **Open to half-open** is purely time-based: wait a cooldown (e.g. 30s) then probe.
 - **Half-open** must limit concurrency to a handful of probes. If you let full traffic through on the first probe, you re-overwhelm a dependency that was just starting to breathe.
 

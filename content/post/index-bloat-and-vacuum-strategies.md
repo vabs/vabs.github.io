@@ -9,7 +9,7 @@ tags: [backend, postgresql, databases, maintenance, performance]
 
 To understand index bloat you first have to understand a design decision at the heart of PostgreSQL: **MVCC**, multi-version concurrency control. PostgreSQL never updates a row in place. An `UPDATE` writes a *new* version of the row and marks the old version as obsolete but does not remove it. A `DELETE` just marks the row dead. The old versions — **dead tuples** — stick around so that transactions which started before the change can still see the version they're entitled to. This is what lets readers never block writers.
 
-The consequence is that tables and indexes accumulate dead tuples. The space they occupy is **bloat**: pages that are physically present, consuming disk and memory, but logically empty. Left unchecked, a table that holds 1 GB of live data can balloon to 5 GB of mostly-dead pages, and every sequential scan, every index range scan, every cache fill drags that dead weight along.
+The consequence is that tables and indexes accumulate dead tuples. The space they occupy is **bloat**: pages that are physically present, consuming disk and memory, but logically empty. Left unchecked, a table that holds 1 GB of live data can balloon to 3 GB of mostly-dead pages, and every sequential scan, every index range scan, every cache fill drags that dead weight along.
 
 ```text
 Live data:   ████░░░░████░░░░████   (░ = dead tuples)
@@ -21,7 +21,7 @@ On disk:     ←——————— 1 GB ———————→  logical
 
 ## What VACUUM actually does
 
-A plain `VACUUM` does not return disk to the operating system. It scans the table, finds dead tuples whose versions are no longer visible to any running transaction, and marks that space as **reusable** — recorded in the free space map so future inserts and updates can fill it. The file stays the same size; the holes inside become available.
+A plain `VACUUM` does not return disk to the operating system (the one exception: it can truncate completely empty pages at the very end of the file). It scans the table, finds dead tuples whose versions are no longer visible to any running transaction, and marks that space as **reusable** — recorded in the free space map so future inserts and updates can fill it. The file generally stays the same size; the holes inside become available.
 
 This is the crucial and frequently-misunderstood point. `VACUUM` controls bloat by *recycling* space, keeping the table at a steady size. It is not a shrink operation. If your steady-state working set genuinely needs that space, recycling is exactly right and the file size plateaus.
 
@@ -53,7 +53,7 @@ vacuum threshold = autovacuum_vacuum_threshold
                  + autovacuum_vacuum_scale_factor × reltuples
 ```
 
-With the default `scale_factor` of 0.2, autovacuum fires when roughly 20% of the table's rows have become dead. That default is fine for small tables and **terrible for large ones**: a 500-million-row table must accumulate 100 million dead tuples before autovacuum touches it. By then bloat is severe and the vacuum itself is a huge, IO-heavy operation.
+With the default `scale_factor` of 0.2, autovacuum fires when roughly 20% of the table's rows have become dead. That default is fine for small tables and **terrible for large ones**: a 500-million-row table must accumulate 100 million dead tuples before autovacuum touches it. By then bloat is severe and the vacuum itself is a huge, IO-heavy operation. (PostgreSQL 18 added `autovacuum_vacuum_max_threshold`, default 100 million, which caps the threshold, but that is still far too lax for most hot tables.)
 
 The standard fix for large hot tables is to lower the scale factor per-table so vacuum runs more often on a smaller delta:
 
@@ -140,7 +140,7 @@ stateDiagram-v2
     Warning --> AntiWraparound: aggressive autovacuum forced
     AntiWraparound --> Healthy: freezing completes
     Warning --> ReadOnly: vacuum blocked, XIDs exhausted
-    ReadOnly --> [*]: emergency single-user vacuum
+    ReadOnly --> [*]: emergency manual VACUUM
 {{< /mermaid >}}
 
 ## The enemy of vacuum: long-running transactions

@@ -103,3 +103,5 @@ On the server, treat the document update log as append-only until compaction. Th
 - Plan for metadata growth, snapshots, and compaction.
 - Use CRDT-aware undo, not naive inverse operations.
 - Test convergence with multiple delivery orders and duplicate updates.
+
+**Related:** [CRDTs & Conflict-Free Replicated Data Types]({{< relref "crdts-and-conflict-free-replicated-data-types.md" >}})

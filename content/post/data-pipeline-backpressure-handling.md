@@ -75,6 +75,8 @@ Sometimes you *want* a buffer to absorb short bursts so that a transient spike d
 | Fail fast | Reject with error | Caller should retry or shed load |
 
 ```python
+import collections
+
 class BoundedBuffer:
     def __init__(self, capacity, policy="drop_oldest"):
         self.capacity = capacity
@@ -137,6 +139,8 @@ Real pipelines layer these techniques. A typical ingestion service might:
 5. **Autoscale consumers** on lag and process-stage queue depth.
 
 ```python
+import asyncio
+
 async def stage(in_stream, out_stream, transform, max_inflight=64):
     sem = asyncio.Semaphore(max_inflight)   # demand limit
     async for item in in_stream:            # backpressures upstream

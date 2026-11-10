@@ -12,7 +12,7 @@ Traffic shifting is the capability that turns a service mesh from a fancy observ
 
 In a mesh like Istio or Linkerd, every pod runs a sidecar proxy (Envoy in Istio's case) that intercepts all inbound and outbound traffic. Traffic shifting is fundamentally a *control plane configuration* that gets compiled down to *data plane routing rules* the sidecar enforces on every request.
 
-The control plane (istiod) takes your high-level intent — "send 10% of traffic to v2" — and pushes Envoy configuration to every sidecar that might originate calls to the target service. The actual splitting happens in the calling pod's sidecar, not at any central gateway. This is the key architectural insight: traffic shifting is **decentralized**. There is no single bottleneck doing the routing.
+The control plane (istiod) takes your high-level intent — "send 10% of traffic to v2" — and pushes Envoy configuration to every sidecar that might originate calls to the target service. The actual splitting happens in the calling pod's sidecar, not at any central gateway. This is the key architectural insight: traffic shifting is **decentralized**. There is no single bottleneck doing the routing. (Istio's ambient mode, GA since 1.24, drops per-pod sidecars; L7 rules such as weighted splits are then enforced by a waypoint proxy in front of the destination service instead, but the same VirtualService/HTTPRoute intent drives it.)
 
 {{< mermaid >}}
 graph LR
@@ -137,7 +137,7 @@ A Flagger canary spec encodes the analysis criteria:
 ```yaml
 analysis:
   interval: 1m
-  threshold: 5          # consecutive failures before rollback
+  threshold: 5          # failed checks before rollback
   maxWeight: 50
   stepWeight: 10
   metrics:
@@ -151,7 +151,7 @@ analysis:
       interval: 1m
 ```
 
-Every interval, the controller raises the canary weight by `stepWeight`, then checks the success rate and p99 latency from the mesh's telemetry. If a metric breaches its threshold `threshold` times in a row, the controller resets the canary weight to zero and the rollout fails closed. This is the whole point: the rollback decision is data-driven and automatic, executing faster than a human paging through Grafana at 2 a.m.
+Every interval, the controller raises the canary weight by `stepWeight`, then checks the success rate and p99 latency from the mesh's telemetry. Once metric checks have failed `threshold` times, the controller resets the canary weight to zero and the rollout fails closed. This is the whole point: the rollback decision is data-driven and automatic, executing faster than a human paging through Grafana at 2 a.m.
 
 ## Metrics That Actually Matter
 
@@ -175,4 +175,4 @@ That last point is the most common analysis bug. Always gate promotion on a mini
 
 ## Conclusion
 
-Traffic shifting is deceptively simple at the YAML level — a couple of weight integers — but the behavior it produces depends on a stack of decisions: per-request vs. sticky routing, where the version decision is made, whether your metrics have enough volume to be trustworthy, and whether all your traffic even flows through the mesh. Get those right and you have a deployment process where a bad release affects 5% of users for sixty seconds before automatically rolling itself back. Get them wrong and you have a canary that lies to you. Treat the weights as the easy part and the analysis criteria as the hard part, because that is exactly the inversion that production will teach you.
+Traffic shifting is deceptively simple at the YAML level — a couple of weight integers — but the behavior it produces depends on a stack of decisions: per-request vs. sticky routing, where the version decision is made, whether your metrics have enough volume to be trustworthy, and whether all your traffic even flows through the mesh. Get those right and you have a deployment process where a bad release affects 10% of users for a few minutes before automatically rolling itself back. Get them wrong and you have a canary that lies to you. Treat the weights as the easy part and the analysis criteria as the hard part, because that is exactly the inversion that production will teach you.

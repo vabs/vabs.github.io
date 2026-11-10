@@ -55,7 +55,7 @@ while (true) {
 text += decoder.decode();
 ```
 
-Where supported, `TextDecoderStream` makes this cleaner:
+`TextDecoderStream` makes this cleaner. Note that `for await` over a `ReadableStream` (async iteration) shipped in browsers later than streams themselves, so older Safari versions need the `getReader()` loop above:
 
 ```js
 const stream = response.body.pipeThrough(new TextDecoderStream());

@@ -105,7 +105,8 @@ scrape_configs:
       # Remove the raw path label entirely
       - regex: "path"
         action: labeldrop
-      # Or normalize numeric IDs in a path before it ever lands
+      # Alternative (do not combine with the labeldrop above):
+      # normalize numeric IDs in a path before it ever lands
       - source_labels: [path]
         regex: "/users/[0-9]+/(.*)"
         target_label: path

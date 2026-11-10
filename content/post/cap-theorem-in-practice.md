@@ -86,7 +86,7 @@ This is the more useful framing day to day, because the latency-versus-consisten
 | Cassandra | AP | Tunable, often favors latency | PA/EL |
 | DynamoDB | AP (tunable) | Eventual by default, strong on request | PA/EL |
 | etcd / ZooKeeper | CP | Consistency over latency | PC/EC |
-| MongoDB | CP (default) | Consistency over latency | PC/EC |
+| MongoDB | CP (default) | Consistency over latency with majority read/write concerns (Abadi's original paper classed it PA/EC) | PC/EC |
 
 Strong consistency in normal operation requires coordination — a write must reach a quorum before it is acknowledged, which adds round trips and latency. Relaxing to eventual consistency lets a node answer immediately from local state. That tradeoff exists every single millisecond, partition or not.
 

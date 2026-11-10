@@ -44,7 +44,7 @@ For non-critical images:
 <img src="/gallery-12.jpg" loading="lazy" fetchpriority="low" alt="">
 ```
 
-Priority Hints also exist for `link` and `script` in supporting browsers, but image LCP is the most common high-value case.
+Priority Hints also exist for `link`, `script`, and `iframe` elements and as the `priority` option of `fetch()`. `fetchpriority` has been supported in Chromium, Safari, and Firefox since late 2024, but image LCP is the most common high-value case.
 
 Priority is relative inside the browser's scheduler. It does not bypass connection limits, congestion control, server response time, or parser discovery. If the browser has not discovered the resource, there is nothing to prioritize. If the server is slow to respond, priority only changes where the request sits relative to other queued work.
 

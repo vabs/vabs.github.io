@@ -124,7 +124,7 @@ When a service shows latency spikes or unexplained slowness, walk these in order
 2. `vmstat 1` — are `si`/`so` (swap in/out) non-zero? Any sustained swap activity on a latency-sensitive service is a red flag.
 3. `ps -o rss,vsz` and the cgroup `memory.current` — is RSS approaching the limit? You are headed for OOM or reclaim pressure.
 4. `perf stat` TLB miss rate — if high with a large heap, evaluate huge pages.
-5. `dmesg | grep -i oom` — did the OOM killer fire? Exit 137 in a container confirms it.
+5. `dmesg | grep -i oom` — did the OOM killer fire? Exit 137 (SIGKILL) in a container, together with an `OOMKilled` reason or an OOM line in the kernel log, confirms it.
 
 ## Summary
 

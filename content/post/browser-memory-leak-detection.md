@@ -49,11 +49,11 @@ Allocation sampling has lower overhead and can identify hot allocation sites. Us
 
 ## Measuring from application code
 
-The browser exposes limited memory APIs. Chromium-based browsers have `performance.memory` in some contexts and `performance.measureUserAgentSpecificMemory()` in newer environments. Treat these as diagnostic signals with feature detection, not portable application logic.
+The browser exposes limited memory APIs. Chromium-based browsers have `performance.memory` in some contexts and `performance.measureUserAgentSpecificMemory()` in newer environments (the latter is only exposed on cross-origin isolated pages). Treat these as diagnostic signals with feature detection, not portable application logic.
 
 ```js
 async function sampleMemory(label) {
-  if ("measureUserAgentSpecificMemory" in performance) {
+  if (self.crossOriginIsolated && "measureUserAgentSpecificMemory" in performance) {
     const result = await performance.measureUserAgentSpecificMemory();
     console.log(label, result.bytes);
   } else if (performance.memory) {

@@ -150,7 +150,7 @@ stateDiagram-v2
   Completed --> [*]
 {{< /mermaid >}}
 
-In Celery, a dead-letter exchange (configured at the broker, e.g. RabbitMQ) catches messages that are rejected or expire. In BullMQ, exhausted jobs land in the *failed* set, retained per `removeOnFail`, where you can inspect, fix the root cause, and requeue. Either way, the dead-letter queue should be **monitored and alerted on** — it is your early warning that a class of jobs is systematically broken, and a growing failed set is a signal that something downstream is wrong, not a place for jobs to quietly accumulate forever.
+In Celery, a dead-letter exchange (configured at the broker, e.g. RabbitMQ) catches messages that are rejected or expire. Note that a task that simply exhausts `max_retries` is recorded as `FAILURE` and its message is acked, not dead-lettered; to route it to the DLX you must raise `Reject(requeue=False)` (with `acks_late`) or forward it yourself. In BullMQ, exhausted jobs land in the *failed* set, retained per `removeOnFail`, where you can inspect, fix the root cause, and requeue. Either way, the dead-letter queue should be **monitored and alerted on** — it is your early warning that a class of jobs is systematically broken, and a growing failed set is a signal that something downstream is wrong, not a place for jobs to quietly accumulate forever.
 
 ## Poison Messages
 

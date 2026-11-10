@@ -140,3 +140,5 @@ For TypeScript code, use `Readonly<T>`, readonly arrays, and lint rules as guard
 - Test reducer transitions and reference preservation.
 
 Immutable data patterns are about making change visible. Once references accurately represent change, rendering, memoization, debugging, and undo become much simpler.
+
+**Related:** [Referential equality]({{< relref "referential-equality.md" >}}), [Structural sharing]({{< relref "structural-sharing.md" >}})

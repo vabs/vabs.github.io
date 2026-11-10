@@ -26,7 +26,7 @@ Design the stable API in those terms. Avoid exposing framework-specific concepts
 
 Use attributes for simple, serializable configuration: `disabled`, `variant`, `label`, `open`, `placement`. Reflect important state from property to attribute when CSS or external observers need to see it. For booleans, follow HTML semantics: presence means true, absence means false.
 
-Use properties for objects, arrays, functions, controllers, and large data. Frameworks differ in how they bind custom-element properties. React historically treated unknown JSX fields as attributes unless configured or wrapped, while other frameworks may set DOM properties more naturally. A thin wrapper can normalize this.
+Use properties for objects, arrays, functions, controllers, and large data. Frameworks differ in how they bind custom-element properties. React historically treated unknown JSX fields as attributes unless configured or wrapped, while other frameworks may set DOM properties more naturally. React 19 closed most of that gap: on the client it assigns a prop as a property when the element defines a matching property, and falls back to an attribute otherwise. A thin wrapper can still normalize the remaining differences.
 
 ```js
 const picker = document.querySelector("date-range-picker");

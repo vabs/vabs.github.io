@@ -112,3 +112,5 @@ For effects, prefer depending on the primitive fields that drive the effect. If 
 - Debug both noisy new references and hidden in-place mutation.
 
 Referential equality is powerful because it is cheap. It becomes reliable only when the codebase consistently treats references as change signals.
+
+**Related:** [Immutable data patterns]({{< relref "immutable-data-patterns.md" >}}), [Structural sharing]({{< relref "structural-sharing.md" >}})

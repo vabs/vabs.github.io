@@ -20,7 +20,7 @@ flowchart TD
 
 Memoization is a trade: pay comparison and cache complexity to avoid recomputation. It only helps when the saved computation is more expensive than the cache overhead and when input identity changes less often than renders. If the inputs are always new objects, the cache misses every time. If the computation is cheap, the memo wrapper may cost more than recalculating.
 
-In React, `useMemo` does not guarantee semantic stability forever; it is a performance hint tied to dependencies. `React.memo` skips child rendering when props compare equal. `useCallback` memoizes function identity, not the work inside the function.
+In React, `useMemo` does not guarantee semantic stability forever; it is a performance hint tied to dependencies. `React.memo` skips child rendering when props compare equal. `useCallback` memoizes function identity, not the work inside the function. Projects using React Compiler (stable since late 2025) get much of this memoization inserted automatically, but the same identity, dependency, and cache-cost rules still apply.
 
 ## Practical uses
 

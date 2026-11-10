@@ -16,7 +16,7 @@ Every garbage collector balances three competing goals, and you cannot maximize 
 - **Latency** — the length and frequency of pauses that stop application threads.
 - **Footprint** — the heap and metadata overhead required to run the collector.
 
-G1 (Garbage First) is a throughput-oriented collector that tries to keep pauses under a soft goal you set. ZGC is a latency-oriented collector designed to keep pauses under a millisecond regardless of heap size, trading some throughput and CPU for that guarantee.
+G1 (Garbage First) is a balanced collector that aims for good throughput while trying to keep pauses under a soft goal you set. ZGC is a latency-oriented collector designed to keep pauses under a millisecond regardless of heap size, trading some throughput and CPU for that guarantee.
 
 {{< mermaid >}}
 graph TD
@@ -73,7 +73,7 @@ This is the crux of the comparison. G1's pause times grow with the amount of liv
 | Max practical heap | ~tens of GB | Multi-TB |
 | Throughput overhead | Low (~5%) | Moderate (~10-15%) |
 | CPU overhead | Low | Higher (barriers, concurrent work) |
-| Memory footprint | Lower | Higher (colored pointers, remembered sets) |
+| Memory footprint | Lower | Higher (needs extra heap headroom so concurrent collection keeps up with allocation) |
 | Compaction | During pauses | Concurrent |
 
 The trade-off is clear: ZGC buys you flat, tiny pauses at the cost of more CPU and memory. If you run a 200 GB heap and cannot tolerate multi-hundred-millisecond pauses, ZGC is transformative. If you run a 4 GB heap on a batch job, G1's superior throughput wins.

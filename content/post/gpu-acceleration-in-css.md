@@ -147,3 +147,5 @@ For lists, test worst-case counts. Ten promoted cards may be fine; two hundred m
 - Stop or simplify offscreen and decorative animations.
 
 GPU acceleration in CSS is really compositing strategy. Use it to move already-painted pixels cheaply, and keep the number and size of those pixels under control.
+
+**Related:** [Paint vs composite vs layout]({{< relref "paint-vs-composite-vs-layout.md" >}}), [Subpixel rendering]({{< relref "subpixel-rendering.md" >}})

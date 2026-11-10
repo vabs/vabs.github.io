@@ -51,6 +51,8 @@ props.put(
 
 The `CooperativeStickyAssignor` also tries to *keep* partitions with their current owner across rebalances, which preserves warm caches and local state. This is the single highest-impact config change for groups that rebalance often.
 
+Kafka 4.0 went further: the next-generation consumer group protocol (KIP-848) is generally available, and clients opt in with `group.protocol=consumer`. Assignment moves to the broker-side group coordinator and each member reconciles incrementally, removing the group-wide synchronization barrier that both eager and cooperative rebalances depend on.
+
 ## Taming rebalances
 
 Several settings and practices reduce both the frequency and the cost of rebalances:
@@ -147,3 +149,5 @@ To get effective exactly-once against an external system, you still need one of:
 - **Two-phase or distributed transactions**, which most teams rightly avoid for their complexity and availability cost.
 
 So the practical guidance is layered: turn on the idempotent producer always; use Kafka transactions (or `exactly_once_v2` in Streams) for Kafka-to-Kafka pipelines; and for the boundary to the outside world, make your effects idempotent. Get the mental model right — that exactly-once is an atomic *consume-process-produce* guarantee inside Kafka, not a magic spell against all duplication — and you will configure these systems correctly instead of being surprised when an external double-write slips through.
+
+**Related:** [Exactly-Once Processing Guarantees]({{< relref "exactly-once-processing-guarantees.md" >}})

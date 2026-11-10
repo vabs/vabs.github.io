@@ -52,7 +52,7 @@ async function runQueue(queue) {
 }
 ```
 
-Where available, `scheduler.postTask` lets you express priority. Use user-blocking priority for immediate interaction results, user-visible for updates the user is waiting to see, and background for indexing, prefetch bookkeeping, and analytics.
+Where available, `scheduler.postTask` lets you express priority. Use user-blocking priority for immediate interaction results, user-visible for updates the user is waiting to see, and background for indexing, prefetch bookkeeping, and analytics. Chromium (129+) also ships `scheduler.yield()`, which yields to the event loop like `setTimeout(0)` but resumes the continuation ahead of other queued tasks, so chunked work is not pushed to the back of the line.
 
 ## Failure modes
 
@@ -64,7 +64,7 @@ Framework schedulers can also be overwhelmed. If every keystroke schedules a ful
 
 ## Diagnostics
 
-Use the Long Tasks API to detect blocked intervals in production. In DevTools, look for long tasks and dense chains of promise callbacks. Enable CPU throttling because starvation that is invisible on a development laptop is often obvious on mid-range phones.
+Use the Long Tasks API to detect blocked intervals in production, or the newer Long Animation Frames API (`long-animation-frame` entries, Chromium 123+), which also attributes the blocking time to specific scripts. In DevTools, look for long tasks and dense chains of promise callbacks. Enable CPU throttling because starvation that is invisible on a development laptop is often obvious on mid-range phones.
 
 Instrument queues with length, age, and dropped-work counters. A queue length that only grows during interaction is a starvation signal. Mark work with `performance.mark` so traces show whether old route work is still running after navigation.
 

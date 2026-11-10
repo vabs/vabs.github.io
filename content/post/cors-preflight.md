@@ -78,7 +78,7 @@ Wildcard plus credentials is the dangerous configuration people remember, but br
 
 Another failure is returning CORS headers only on success responses. Browsers enforce CORS on error responses too. If a `401`, `403`, or `500` lacks CORS headers, frontend code sees a generic CORS failure instead of the real status, which slows debugging and can break auth refresh flows.
 
-Redirects can complicate preflight. A preflight or actual request that redirects to a different host must still satisfy CORS at the final response, and some legacy browser behaviors around preflight redirects are surprising. Prefer direct API URLs for cross-origin calls.
+Redirects can complicate preflight. A preflight response that redirects is treated as a failure, because browsers do not follow redirects for `OPTIONS` preflights. An actual request that redirects to a different host must still satisfy CORS on the redirected response, and some legacy browser behaviors around redirects are surprising. Prefer direct API URLs for cross-origin calls.
 
 ## Diagnostics
 

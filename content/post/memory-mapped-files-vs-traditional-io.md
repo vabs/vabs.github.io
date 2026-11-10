@@ -30,9 +30,9 @@ The critical structural difference: traditional I/O always involves a copy betwe
 
 ## The Cost of a Copy
 
-That extra copy in traditional I/O is not free, but it's also not always the bottleneck people imagine. A `memcpy` of a 4 KB page on modern hardware costs perhaps tens of nanoseconds. The real costs of traditional I/O are:
+That extra copy in traditional I/O is not free, but it's also not always the bottleneck people imagine. A `memcpy` of a 4 KB page on modern hardware costs on the order of 100 nanoseconds when the data is in cache. The real costs of traditional I/O are:
 
-- **System call overhead.** Each `read()`/`write()` is a mode switch into the kernel. With spectre/meltdown mitigations enabled, a single syscall can cost 1-2 microseconds. If you do millions of small reads, this dominates.
+- **System call overhead.** Each `read()`/`write()` is a mode switch into the kernel. With spectre/meltdown mitigations enabled, a cheap syscall costs a few hundred nanoseconds, and real work inside `read()` pushes it toward a microsecond. If you do millions of small reads, this dominates.
 - **Buffer management.** You size buffers, handle partial reads, and loop until satisfied.
 - **Double buffering for random access.** Random access patterns waste readahead and force frequent small syscalls.
 
@@ -120,7 +120,7 @@ The `madvise()` system call lets you tell the kernel about your intended access 
 madvise(p, len, MADV_SEQUENTIAL);  // aggressive readahead, early eviction
 madvise(p, len, MADV_RANDOM);      // disable readahead
 madvise(p, len, MADV_WILLNEED);    // prefetch these pages now
-madvise(p, len, MADV_DONTNEED);    // drop these pages from RAM
+madvise(p, len, MADV_DONTNEED);    // unmap these pages; next access refaults
 ```
 
 For a sequential scan, `MADV_SEQUENTIAL` tells the kernel to read ahead aggressively and evict pages behind you, keeping the resident set small. For a random-access index, `MADV_RANDOM` disables readahead so you don't waste bandwidth pulling in pages you'll never touch. `MADV_WILLNEED` is essentially an asynchronous prefetch: issue it, do other work, and the pages should be resident by the time you need them, converting potential major faults into minor ones.

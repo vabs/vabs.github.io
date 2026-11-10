@@ -18,7 +18,7 @@ graph TD
     B -->|No| D{"Cookie mode"}
     D -->|Strict| E["Blocked"]
     D -->|Lax| F["Sent only on safe top-level navigation"]
-    D -->|"None; Secure"| G["Sent cross-site"]
+    D -->|"None + Secure"| G["Sent cross-site"]
 {{< /mermaid >}}
 
 SameSite is best understood as a browser delivery rule, not a server authorization rule. The server still must validate sessions, origins, CSRF tokens, and permissions. SameSite only changes whether the cookie reaches the server for a given request context.
@@ -109,7 +109,7 @@ Log authentication failures with whether a session cookie was absent, invalid, o
 Create a small diagnostic matrix for each auth flow:
 
 ```text
-Flow                 Context             Expected mode
+Flow                  Context              Expected mode
 Login return          top-level GET        Lax or None
 Payment callback      top-level GET/POST   depends on provider
 Embedded widget       iframe/fetch         None; Secure

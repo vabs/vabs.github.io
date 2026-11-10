@@ -91,7 +91,7 @@ containers:
           command: ["sh", "-c", "sleep 10"]
 ```
 
-The application must also catch `SIGTERM`, flip its readiness probe to failing, and then drain. The grace period must be longer than the longest expected request plus the preStop sleep, or the orchestrator will `SIGKILL` mid-request.
+Recent Kubernetes versions also support a built-in `preStop: sleep: seconds: 10` action, which avoids needing a shell in the container image. The application must also catch `SIGTERM`, flip its readiness probe to failing, and then drain. The grace period must be longer than the longest expected request plus the preStop sleep, or the orchestrator will `SIGKILL` mid-request.
 
 ## Precondition 2: Health checks that mean the right thing
 
@@ -125,8 +125,9 @@ The safe expand-contract sequence spread across three deploys:
 ```text
 EXPAND (deploy 1):
   - Add new column email_address (nullable)
-  - Backfill: copy email -> email_address
   - Code writes to BOTH columns, reads from old (email)
+  - Backfill: copy email -> email_address (after dual-writes are live,
+    so rows written during the backfill are not missed)
 
 MIGRATE (deploy 2):
   - Code reads from email_address, still writes both

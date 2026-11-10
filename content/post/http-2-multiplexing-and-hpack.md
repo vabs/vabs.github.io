@@ -39,8 +39,8 @@ The most important frame types:
 | SETTINGS | Connection-level configuration exchange |
 | WINDOW_UPDATE | Flow control credit |
 | RST_STREAM | Abruptly terminate one stream |
-| PRIORITY | Express dependency and weight for a stream |
-| PUSH_PROMISE | Server announces a resource it will push |
+| PRIORITY | Express dependency and weight for a stream (deprecated by RFC 9113) |
+| PUSH_PROMISE | Server announces a resource it will push (server push is now effectively dead; Chrome and Firefox removed support) |
 | GOAWAY | Graceful connection shutdown |
 | PING | Liveness and RTT measurement |
 
@@ -84,11 +84,11 @@ stateDiagram-v2
 
 ### Flow control
 
-With many streams sharing one connection, a single fast producer could overwhelm a slow consumer. HTTP/2 adds credit-based flow control at two levels: per-stream and per-connection. The receiver advertises an initial window via SETTINGS, and every DATA frame consumes window. The receiver issues WINDOW_UPDATE frames to grant more credit as it processes data. A sender that exhausts the window must stop sending DATA on that stream until credited again. Tuning these windows is one of the more impactful HTTP/2 server tuning knobs; default windows are often too small for high-BDP links.
+With many streams sharing one connection, a single fast producer could overwhelm a slow consumer. HTTP/2 adds credit-based flow control at two levels: per-stream and per-connection. Both windows start at 65,535 bytes; SETTINGS can change the initial stream window, while the connection window can only be raised with WINDOW_UPDATE. Every DATA frame consumes window. The receiver issues WINDOW_UPDATE frames to grant more credit as it processes data. A sender that exhausts the window must stop sending DATA on that stream until credited again. Tuning these windows is one of the more impactful HTTP/2 server tuning knobs; default windows are often too small for high-BDP links.
 
 ### Prioritization
 
-Not all resources are equal. CSS blocks rendering; a tracking pixel does not. HTTP/2 lets a client express a dependency tree with weights so the server knows which streams to favor when bandwidth is scarce. In practice the original priority scheme proved hard to implement well, and many servers ignored it, which is part of why HTTP/3 replaced it with a simpler model. Still, on the connection it remains the mechanism for hinting urgency.
+Not all resources are equal. CSS blocks rendering; a tracking pixel does not. HTTP/2 lets a client express a dependency tree with weights so the server knows which streams to favor when bandwidth is scarce. In practice the original priority scheme proved hard to implement well, and many servers ignored it. RFC 9113 (the 2022 revision of HTTP/2) deprecated the dependency tree, and RFC 9218 Extensible Priorities replaced it with a simpler model (an urgency level plus an incremental flag, carried in the `Priority` header and a `PRIORITY_UPDATE` frame) that is used by both HTTP/2 and HTTP/3.
 
 ## HPACK: compressing headers without leaking secrets
 

@@ -144,7 +144,7 @@ tokens = math.min(tonumber(ARGV[1]), tokens + delta)
 local cost = tonumber(ARGV[4])
 local allowed = tokens >= cost
 if allowed then tokens = tokens - cost end
-redis.call('HMSET', KEYS[1], 'tokens', tokens, 'ts', ARGV[3])
+redis.call('HSET', KEYS[1], 'tokens', tokens, 'ts', ARGV[3])
 redis.call('EXPIRE', KEYS[1], 3600)
 return allowed and 1 or 0
 ```

@@ -41,7 +41,7 @@ When a packet is acknowledged, every unacknowledged packet sent sufficiently ear
 
 ### Time threshold
 
-Reordering can also be temporal. If a later packet has been acknowledged and an earlier packet was sent more than a threshold of time ago, the earlier one is declared lost even if the packet-number gap is small. The threshold is derived from the smoothed RTT and its variation:
+Reordering can also be temporal. If a later packet has been acknowledged and an earlier packet was sent more than a threshold of time ago, the earlier one is declared lost even if the packet-number gap is small. The threshold is derived from the smoothed RTT and the latest RTT sample:
 
 ```text
 time_threshold = max(kTimeThreshold * max(smoothed_rtt, latest_rtt),
@@ -60,8 +60,8 @@ sequenceDiagram
     S->>R: Packet 42 (stream A)
     S->>R: Packet 43 (stream C)
     R->>S: ACK 40, 42, 43
-    Note over S: 41 is 2+ below largest acked (43)
-    Note over S: and older than time threshold
+    Note over S: 41 is only 2 below largest acked 43, under the packet threshold of 3
+    Note over S: but 41 is older than the time threshold
     S->>S: Declare packet 41 lost
     S->>R: Packet 44: retransmit frames from 41
 {{< /mermaid >}}
@@ -90,7 +90,7 @@ When the PTO timer fires, QUIC does **not** assume congestion and does not colla
 
 ## Streams isolate the damage
 
-Now the payoff. When QUIC declares packet 41 lost in the diagram above, only the STREAM frames that were in packet 41 need retransmission. Suppose packet 41 carried data for stream B. Streams A, C, and D are completely unaffected. Their data, which arrived in other packets, is delivered to the application immediately. Only stream B waits for the retransmission.
+Now the payoff. When QUIC declares packet 41 lost in the diagram above, only the STREAM frames that were in packet 41 need retransmission. Suppose packet 41 carried data for stream B. Streams A and C are completely unaffected. Their data, which arrived in other packets, is delivered to the application immediately. Only stream B waits for the retransmission.
 
 {{< mermaid >}}
 graph TD
@@ -128,3 +128,5 @@ QUIC connections are identified by a **Connection ID**, not by the 4-tuple of IP
 ```
 
 The throughline: by giving itself unambiguous, never-reused packet numbers, QUIC turns loss detection into a clean, well-defined problem. Threshold and time detectors handle reordering, PTO handles tail loss without punishing throughput, and because the transport understands streams, a lost packet only delays the streams whose data it carried. That combination is what finally kills transport-layer head-of-line blocking, the one thing HTTP/2 could never fix while it was chained to TCP.
+
+**Related:** [HTTP/3 and QUIC]({{< relref "http-3-and-quic.md" >}})

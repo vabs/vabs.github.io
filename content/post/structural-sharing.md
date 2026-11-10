@@ -123,3 +123,5 @@ Use version fields when identity alone is not enough. Large immutable records ca
 - Align state boundaries with UI consumption patterns.
 
 Structural sharing is what makes immutable state practical at application scale. It turns reference identity into a compact change map.
+
+**Related:** [Immutable data patterns]({{< relref "immutable-data-patterns.md" >}}), [Referential equality]({{< relref "referential-equality.md" >}})

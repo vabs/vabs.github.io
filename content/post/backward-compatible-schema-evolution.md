@@ -115,7 +115,7 @@ Protobuf rules for safe evolution:
 
 - **Adding a field** with a new number is fully compatible — old readers skip it, new readers default it.
 - **Never reuse a field number.** Reserve dropped numbers with `reserved 4;` so no future field accidentally reuses the tag and misinterprets old bytes.
-- **Renaming a field is free** since names are not on the wire.
+- **Renaming a field is free** since names are not on the binary wire (it does break consumers using the ProtoJSON or text formats, which encode field names).
 - **Changing a field's type is dangerous** unless the types are wire-compatible (e.g. `int32`/`int64` for small values).
 
 ### Avro

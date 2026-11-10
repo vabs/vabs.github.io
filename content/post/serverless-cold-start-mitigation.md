@@ -82,7 +82,7 @@ Different runtimes have radically different bootstrap costs because they carry d
 | Interpreted lightweight (Node.js, Python) | Low–medium | Fast to start, but init code dominates |
 | JVM / .NET | Highest | Class loading & JIT warmup are expensive |
 
-The JVM is the classic cold-start sufferer because class loading and JIT compilation happen at startup. Mitigations like ahead-of-time compilation (GraalVM native image) or framework-level optimizations (Quarkus, Micronaut) can collapse a multi-second JVM cold start to tens of milliseconds by doing at build time what the JVM normally does at runtime. If you control the runtime choice and cold starts are your bottleneck, a compiled language sidesteps most of the problem.
+The JVM is the classic cold-start sufferer because class loading and JIT compilation happen at startup. Mitigations like ahead-of-time compilation (GraalVM native image) or framework-level optimizations (Quarkus, Micronaut) can collapse a multi-second JVM cold start to tens of milliseconds by doing at build time what the JVM normally does at runtime. On AWS Lambda, SnapStart (Java, and since late 2024 also Python and .NET) takes a different route: it snapshots the initialized execution environment and resumes new environments from that snapshot, cutting init cost without changing runtimes. If you control the runtime choice and cold starts are your bottleneck, a compiled language sidesteps most of the problem.
 
 ## Provisioned Concurrency
 

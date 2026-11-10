@@ -97,3 +97,5 @@ Do not let HTTP/3 distract from higher-impact work. If LCP is dominated by a 700
 - Edge logs expose protocol, fallback, and handshake failures.
 - Tail latency is compared across similar network cohorts.
 - Non-idempotent requests are reviewed for 0-RTT implications.
+
+**Related:** [HTTP/3 and QUIC Packet Loss Recovery]({{< relref "http-3-and-quic-packet-loss-recovery.md" >}})

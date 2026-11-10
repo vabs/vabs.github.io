@@ -160,3 +160,5 @@ A defensive pool configuration looks like this:
 ## Summary
 
 Connection pool exhaustion presents as generic latency and errors while the database looks healthy, because the failure happens in the application's wait queue, not the database. The pool is bounded because connections are expensive and the database has a hard ceiling — and oversubscribing it across many instances is the most common root cause. Exhaustion comes from leaks, slow queries holding connections, undersized pools, and the cardinal sin of holding a connection across an external call. Diagnose it with pool metrics (active at max, pending climbing) and `pg_stat_activity`. Size pools small and deliberately via Little's Law, sum across instances, reach for PgBouncer at high instance counts, and configure timeouts and leak detection so the pool fails fast and tells you why.
+
+**Related:** [Connection Pooling Pitfalls]({{< relref "connection-pooling-pitfalls.md" >}})

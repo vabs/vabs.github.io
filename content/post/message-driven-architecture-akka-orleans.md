@@ -30,7 +30,7 @@ graph LR
 
 ## Akka: Explicit Actors
 
-Akka brings the classic actor model to the JVM with relatively little ceremony hidden from you. You define actors, you create them in a hierarchy, you address them by reference, and you manage their lifecycle. Akka's philosophy is that you, the developer, should be in control of the topology because you understand your domain.
+Akka brings the classic actor model to the JVM with relatively little ceremony hidden from you. You define actors, you create them in a hierarchy, you address them by reference, and you manage their lifecycle. Akka's philosophy is that you, the developer, should be in control of the topology because you understand your domain. (Since 2022 Akka has been licensed under the Business Source License, which requires a commercial license for most production use; Apache Pekko is the Apache-licensed fork of Akka 2.6 with essentially the same APIs.)
 
 ```scala
 object Account {
@@ -94,7 +94,7 @@ graph TD
 | Actor model | Explicit actors | Virtual actors (grains) |
 | Lifecycle | Developer-managed | Runtime-managed |
 | Placement | Configured (sharding) | Automatic |
-| Supervision | Explicit hierarchy | Runtime restarts on failure |
+| Supervision | Explicit hierarchy | None; exceptions propagate to the caller, grain stays active |
 | Platform | JVM (Scala/Java) | .NET (C#) |
 | Learning curve | Steeper | Gentler |
 | Control granularity | Fine | Coarse |
@@ -136,3 +136,5 @@ And it's worth asking whether you need a distributed actor framework at all. For
 ## Conclusion
 
 Akka and Orleans both make distributed, message-driven systems tractable by building on the actor model, but they sit at opposite ends of the control-versus-convenience spectrum. Akka gives you explicit actors and the full toolkit to craft any topology, demanding expertise in return. Orleans gives you virtual actors that always exist and a runtime that handles placement, lifecycle, and recovery, trading fine-grained control for simplicity. Both force you to confront the realities the network won't let you ignore: messages can be lost, handlers must be idempotent, and state must be persisted to survive failure. Whichever you choose, the message-driven mindset, decouple in time and space, embrace failure, and design for it, is what ultimately makes a system scale and endure.
+
+**Related:** [Actor Model vs Shared-Memory Concurrency]({{< relref "actor-model-vs-shared-memory-concurrency.md" >}})

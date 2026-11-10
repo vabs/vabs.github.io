@@ -136,3 +136,5 @@ CRDTs are not free, and the metadata is where the bodies are buried.
 CRDTs shine when you need offline-capable, multi-writer data with no central coordinator and you can express your domain in terms of grow-only, observed-remove, or LWW semantics: collaborative editors, distributed caches, shopping carts, presence systems, and multi-region counters. They are the wrong tool when you need invariants that span multiple keys (a uniqueness constraint, a non-negative balance enforced globally) — those still require coordination, because no per-object merge function can enforce a cross-object rule.
 
 Used in their sweet spot, CRDTs deliver something genuinely rare in distributed systems: correctness without consensus. The price is paid in metadata and in carefully matching your merge semantics to what users actually expect. Get both right and you get a system that never says "no" to a write and never asks the user to resolve a conflict.
+
+**Related:** [CRDT basics for collaboration]({{< relref "crdt-basics-for-collaboration.md" >}})

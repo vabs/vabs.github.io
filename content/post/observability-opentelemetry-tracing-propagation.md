@@ -111,7 +111,7 @@ HTTP is the easy case. Real systems also cross message queues, gRPC metadata, an
 | Cloud Pub/Sub | message attributes |
 | Cron / batch | often a fresh root (no inbound parent) |
 
-For asynchronous messaging the producer injects context into the message headers when publishing, and the consumer extracts it when processing. Because the consume happens later (and possibly in a different service), OTel models this with **span links** rather than strict parent/child, since the producing span may have already ended. This preserves causality even when there is no live parent.
+For asynchronous messaging the producer injects context into the message headers when publishing, and the consumer extracts it when processing. Because the consume happens later (and possibly in a different service), OTel's messaging conventions often model this with **span links** rather than strict parent/child, since the producing span may have already ended and a batch consumer may process messages from many traces at once. This preserves causality even when there is no live parent. For the simple one-message-at-a-time case, using the extracted context as the parent (as below) is also common.
 
 ```python
 # producer: inject context into the outgoing message
